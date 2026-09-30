@@ -1,0 +1,816 @@
+[
+  {
+    "id": "c360",
+    "name": "360 Consent",
+    "cat": "necessary",
+    "hosts": [
+      "cdn.jsdelivr.net/gh/pengemedia-fejlesztes/360-consent"
+    ],
+    "gtm": [
+      "360-consent@"
+    ],
+    "cookies": [
+      [
+        "c360_consent",
+        "1y"
+      ]
+    ]
+  },
+  {
+    "id": "gtm",
+    "name": "Google Tag Manager",
+    "cat": "necessary",
+    "hosts": [
+      "googletagmanager.com/gtm.js"
+    ],
+    "gtm": [],
+    "cookies": []
+  },
+  {
+    "id": "cookieyes",
+    "name": "CookieYes",
+    "cat": "necessary",
+    "cmp": true,
+    "hosts": [
+      "cdn-cookieyes.com",
+      "log.cookieyes.com",
+      "@self/wp-content/plugins/cookie-law-info/"
+    ],
+    "gtm": [
+      "cdn-cookieyes.com"
+    ],
+    "cookies": [
+      [
+        "cookieyes-consent",
+        "1y"
+      ]
+    ]
+  },
+  {
+    "id": "cookiebot",
+    "name": "Cookiebot",
+    "cat": "necessary",
+    "cmp": true,
+    "hosts": [
+      "consent.cookiebot.com",
+      "consentcdn.cookiebot.com"
+    ],
+    "gtm": [
+      "consent.cookiebot.com"
+    ],
+    "cookies": [
+      [
+        "CookieConsent",
+        "1y"
+      ]
+    ]
+  },
+  {
+    "id": "onetrust",
+    "name": "OneTrust",
+    "cat": "necessary",
+    "cmp": true,
+    "hosts": [
+      "cdn.cookielaw.org",
+      "geolocation.onetrust.com"
+    ],
+    "gtm": [
+      "cdn.cookielaw.org"
+    ],
+    "cookies": [
+      [
+        "OptanonConsent",
+        "1y"
+      ],
+      [
+        "OptanonAlertBoxClosed",
+        "1y"
+      ]
+    ]
+  },
+  {
+    "id": "usercentrics",
+    "name": "Usercentrics",
+    "cat": "necessary",
+    "cmp": true,
+    "hosts": [
+      "app.usercentrics.eu",
+      "web.cmp.usercentrics.eu"
+    ],
+    "gtm": [
+      "usercentrics.eu"
+    ],
+    "cookies": []
+  },
+  {
+    "id": "iubenda",
+    "name": "iubenda",
+    "cat": "necessary",
+    "cmp": true,
+    "hosts": [
+      "cdn.iubenda.com",
+      "cs.iubenda.com"
+    ],
+    "gtm": [
+      "cdn.iubenda.com"
+    ],
+    "cookies": [
+      [
+        "_iub_cs-*",
+        "1y"
+      ]
+    ]
+  },
+  {
+    "id": "complianz",
+    "name": "Complianz",
+    "cat": "necessary",
+    "cmp": true,
+    "hosts": [
+      "@self/wp-content/plugins/complianz-gdpr/",
+      "@self/wp-content/plugins/complianz-gdpr-premium/"
+    ],
+    "gtm": [],
+    "cookies": [
+      [
+        "cmplz_*",
+        "1y"
+      ]
+    ]
+  },
+  {
+    "id": "borlabs",
+    "name": "Borlabs Cookie",
+    "cat": "necessary",
+    "cmp": true,
+    "hosts": [
+      "@self/wp-content/plugins/borlabs-cookie/"
+    ],
+    "gtm": [],
+    "cookies": [
+      [
+        "borlabs-cookie",
+        "1y"
+      ]
+    ]
+  },
+  {
+    "id": "wordpress",
+    "name": "WordPress",
+    "cat": "necessary",
+    "hosts": [
+      "@self/wp-content/",
+      "@self/wp-includes/"
+    ],
+    "gtm": [],
+    "cookies": [
+      [
+        "wordpress_test_cookie",
+        "s"
+      ],
+      [
+        "wp-settings-*",
+        "1y"
+      ],
+      [
+        "wp-settings-time-*",
+        "1y"
+      ]
+    ]
+  },
+  {
+    "id": "woocommerce",
+    "name": "WooCommerce",
+    "cat": "necessary",
+    "hosts": [
+      "@self/wp-content/plugins/woocommerce/"
+    ],
+    "gtm": [],
+    "cookies": [
+      [
+        "woocommerce_cart_hash",
+        "s"
+      ],
+      [
+        "woocommerce_items_in_cart",
+        "s"
+      ],
+      [
+        "wp_woocommerce_session_*",
+        "2d"
+      ]
+    ]
+  },
+  {
+    "id": "recaptcha",
+    "name": "Google reCAPTCHA",
+    "cat": "necessary",
+    "hosts": [
+      "google.com/recaptcha",
+      "gstatic.com/recaptcha",
+      "recaptcha.net"
+    ],
+    "gtm": [],
+    "cookies": [
+      [
+        "_GRECAPTCHA",
+        "6mo"
+      ]
+    ]
+  },
+  {
+    "id": "cloudflare",
+    "name": "Cloudflare",
+    "cat": "necessary",
+    "hosts": [
+      "challenges.cloudflare.com",
+      "cdnjs.cloudflare.com/cdn-cgi"
+    ],
+    "gtm": [],
+    "cookies": [
+      [
+        "__cf_bm",
+        "30min"
+      ],
+      [
+        "cf_clearance",
+        "1y"
+      ],
+      [
+        "_cfuvid",
+        "s"
+      ]
+    ]
+  },
+  {
+    "id": "polylang",
+    "name": "Polylang / WPML",
+    "cat": "preferences",
+    "hosts": [
+      "@self/wp-content/plugins/polylang",
+      "@self/wp-content/plugins/sitepress-multilingual-cms"
+    ],
+    "gtm": [],
+    "cookies": [
+      [
+        "pll_language",
+        "1y"
+      ],
+      [
+        "wp-wpml_current_language",
+        "s"
+      ]
+    ]
+  },
+  {
+    "id": "tawk",
+    "name": "Tawk.to chat",
+    "cat": "preferences",
+    "hosts": [
+      "embed.tawk.to",
+      "va.tawk.to"
+    ],
+    "gtm": [
+      "embed.tawk.to"
+    ],
+    "cookies": [
+      [
+        "TawkConnectionTime",
+        "s"
+      ],
+      [
+        "twk_uuid_*",
+        "6mo"
+      ]
+    ]
+  },
+  {
+    "id": "crisp",
+    "name": "Crisp chat",
+    "cat": "preferences",
+    "hosts": [
+      "client.crisp.chat"
+    ],
+    "gtm": [
+      "client.crisp.chat"
+    ],
+    "cookies": [
+      [
+        "crisp-client/*",
+        "6mo"
+      ]
+    ]
+  },
+  {
+    "id": "tidio",
+    "name": "Tidio chat",
+    "cat": "preferences",
+    "hosts": [
+      "code.tidio.co"
+    ],
+    "gtm": [
+      "code.tidio.co"
+    ],
+    "cookies": []
+  },
+  {
+    "id": "ga4",
+    "name": "Google Analytics",
+    "cat": "statistics",
+    "gcm": true,
+    "hosts": [
+      "google-analytics.com",
+      "analytics.google.com",
+      "googletagmanager.com/gtag/js?id=G-"
+    ],
+    "gtm": [
+      "re:G-[A-Z0-9]{6,12}"
+    ],
+    "cookies": [
+      [
+        "_ga",
+        "2y"
+      ],
+      [
+        "_ga_*",
+        "2y"
+      ],
+      [
+        "_gid",
+        "1d"
+      ],
+      [
+        "_gat*",
+        "1min"
+      ]
+    ]
+  },
+  {
+    "id": "clarity",
+    "name": "Microsoft Clarity",
+    "cat": "statistics",
+    "hosts": [
+      "clarity.ms",
+      "clarity.microsoft.com"
+    ],
+    "gtm": [
+      "clarity.ms"
+    ],
+    "cookies": [
+      [
+        "_clck",
+        "1y"
+      ],
+      [
+        "_clsk",
+        "1d"
+      ],
+      [
+        "CLID",
+        "1y"
+      ]
+    ]
+  },
+  {
+    "id": "hotjar",
+    "name": "Hotjar",
+    "cat": "statistics",
+    "hosts": [
+      "hotjar.com",
+      "hotjar.io"
+    ],
+    "gtm": [
+      "static.hotjar.com",
+      "hjid:"
+    ],
+    "cookies": [
+      [
+        "_hjSessionUser_*",
+        "1y"
+      ],
+      [
+        "_hjSession_*",
+        "30min"
+      ]
+    ]
+  },
+  {
+    "id": "matomo",
+    "name": "Matomo",
+    "cat": "statistics",
+    "hosts": [
+      "matomo.cloud",
+      "@self/matomo.js",
+      "@self/piwik.js"
+    ],
+    "gtm": [
+      "_paq.push",
+      "matomo.js"
+    ],
+    "cookies": [
+      [
+        "_pk_id.*",
+        "13mo"
+      ],
+      [
+        "_pk_ses.*",
+        "30min"
+      ]
+    ]
+  },
+  {
+    "id": "yandex",
+    "name": "Yandex Metrica",
+    "cat": "statistics",
+    "hosts": [
+      "mc.yandex.ru",
+      "mc.yandex.com"
+    ],
+    "gtm": [
+      "mc.yandex.ru"
+    ],
+    "cookies": [
+      [
+        "_ym_uid",
+        "1y"
+      ],
+      [
+        "_ym_d",
+        "1y"
+      ]
+    ]
+  },
+  {
+    "id": "smartlook",
+    "name": "Smartlook",
+    "cat": "statistics",
+    "hosts": [
+      "smartlook.com"
+    ],
+    "gtm": [
+      "smartlook.com"
+    ],
+    "cookies": []
+  },
+  {
+    "id": "vimeo",
+    "name": "Vimeo",
+    "cat": "statistics",
+    "hosts": [
+      "player.vimeo.com",
+      "vimeocdn.com"
+    ],
+    "gtm": [],
+    "cookies": [
+      [
+        "vuid",
+        "2y"
+      ]
+    ],
+    "embed": true
+  },
+  {
+    "id": "google-ads",
+    "name": "Google Ads",
+    "cat": "marketing",
+    "gcm": true,
+    "hosts": [
+      "googleadservices.com",
+      "googleads.g.doubleclick.net",
+      "googletagmanager.com/gtag/js?id=AW-",
+      "google.com/pagead",
+      "google.com/ccm"
+    ],
+    "gtm": [
+      "re:AW-[0-9]{6,}",
+      "\"__awct\"",
+      "\"__sp\""
+    ],
+    "cookies": [
+      [
+        "_gcl_au",
+        "3mo"
+      ],
+      [
+        "_gcl_aw",
+        "3mo"
+      ]
+    ]
+  },
+  {
+    "id": "doubleclick",
+    "name": "Google DoubleClick / Floodlight",
+    "cat": "marketing",
+    "gcm": true,
+    "hosts": [
+      "doubleclick.net",
+      "fls.doubleclick.net"
+    ],
+    "gtm": [
+      "re:DC-[0-9]{6,}",
+      "\"__flc\""
+    ],
+    "cookies": [
+      [
+        "IDE",
+        "13mo"
+      ],
+      [
+        "test_cookie",
+        "15min"
+      ]
+    ]
+  },
+  {
+    "id": "adsense",
+    "name": "Google AdSense",
+    "cat": "marketing",
+    "gcm": true,
+    "hosts": [
+      "googlesyndication.com",
+      "adservice.google.com"
+    ],
+    "gtm": [
+      "pagead2.googlesyndication.com"
+    ],
+    "cookies": [
+      [
+        "__gads",
+        "13mo"
+      ],
+      [
+        "__gpi",
+        "13mo"
+      ]
+    ]
+  },
+  {
+    "id": "meta",
+    "name": "Meta (Facebook) Pixel",
+    "cat": "marketing",
+    "hosts": [
+      "connect.facebook.net",
+      "facebook.com/tr"
+    ],
+    "gtm": [
+      "connect.facebook.net",
+      "fbq("
+    ],
+    "cookies": [
+      [
+        "_fbp",
+        "3mo"
+      ],
+      [
+        "_fbc",
+        "3mo"
+      ]
+    ]
+  },
+  {
+    "id": "tiktok",
+    "name": "TikTok Pixel",
+    "cat": "marketing",
+    "hosts": [
+      "analytics.tiktok.com"
+    ],
+    "gtm": [
+      "analytics.tiktok.com",
+      "ttq.load"
+    ],
+    "cookies": [
+      [
+        "_ttp",
+        "13mo"
+      ],
+      [
+        "_tt_enable_cookie",
+        "13mo"
+      ]
+    ]
+  },
+  {
+    "id": "linkedin",
+    "name": "LinkedIn Insight Tag",
+    "cat": "marketing",
+    "hosts": [
+      "snap.licdn.com",
+      "px.ads.linkedin.com"
+    ],
+    "gtm": [
+      "snap.licdn.com",
+      "_linkedin_partner_id"
+    ],
+    "cookies": [
+      [
+        "li_sugr",
+        "3mo"
+      ],
+      [
+        "li_fat_id",
+        "1mo"
+      ],
+      [
+        "bcookie",
+        "1y"
+      ],
+      [
+        "lidc",
+        "1d"
+      ]
+    ]
+  },
+  {
+    "id": "bing-ads",
+    "name": "Microsoft Advertising (UET)",
+    "cat": "marketing",
+    "hosts": [
+      "bat.bing.com"
+    ],
+    "gtm": [
+      "bat.bing.com"
+    ],
+    "cookies": [
+      [
+        "_uetsid",
+        "1d"
+      ],
+      [
+        "_uetvid",
+        "13mo"
+      ],
+      [
+        "MUID",
+        "1y"
+      ]
+    ]
+  },
+  {
+    "id": "pinterest",
+    "name": "Pinterest Tag",
+    "cat": "marketing",
+    "hosts": [
+      "s.pinimg.com/ct",
+      "ct.pinterest.com"
+    ],
+    "gtm": [
+      "pintrk("
+    ],
+    "cookies": [
+      [
+        "_pinterest_ct_ua",
+        "1y"
+      ],
+      [
+        "_pin_unauth",
+        "1y"
+      ]
+    ]
+  },
+  {
+    "id": "x-ads",
+    "name": "X (Twitter) Pixel",
+    "cat": "marketing",
+    "hosts": [
+      "static.ads-twitter.com",
+      "analytics.twitter.com",
+      "t.co/i/adsct"
+    ],
+    "gtm": [
+      "static.ads-twitter.com",
+      "twq("
+    ],
+    "cookies": [
+      [
+        "personalization_id",
+        "13mo"
+      ],
+      [
+        "muc_ads",
+        "13mo"
+      ]
+    ]
+  },
+  {
+    "id": "snapchat",
+    "name": "Snap Pixel",
+    "cat": "marketing",
+    "hosts": [
+      "sc-static.net",
+      "tr.snapchat.com"
+    ],
+    "gtm": [
+      "sc-static.net",
+      "snaptr("
+    ],
+    "cookies": [
+      [
+        "_scid",
+        "13mo"
+      ]
+    ]
+  },
+  {
+    "id": "hubspot",
+    "name": "HubSpot",
+    "cat": "marketing",
+    "hosts": [
+      "js.hs-scripts.com",
+      "js.hs-analytics.net",
+      "js.hsforms.net",
+      "track.hubspot.com"
+    ],
+    "gtm": [
+      "hs-scripts.com"
+    ],
+    "cookies": [
+      [
+        "__hstc",
+        "13mo"
+      ],
+      [
+        "hubspotutk",
+        "13mo"
+      ],
+      [
+        "__hssc",
+        "30min"
+      ],
+      [
+        "__hssrc",
+        "s"
+      ]
+    ]
+  },
+  {
+    "id": "youtube",
+    "name": "YouTube",
+    "cat": "marketing",
+    "hosts": [
+      "youtube.com/embed",
+      "youtube.com/iframe_api",
+      "youtube-nocookie.com"
+    ],
+    "gtm": [],
+    "cookies": [
+      [
+        "YSC",
+        "s"
+      ],
+      [
+        "VISITOR_INFO1_LIVE",
+        "6mo"
+      ],
+      [
+        "VISITOR_PRIVACY_METADATA",
+        "6mo"
+      ]
+    ],
+    "embed": true
+  },
+  {
+    "id": "google-maps",
+    "name": "Google Maps",
+    "cat": "marketing",
+    "hosts": [
+      "maps.googleapis.com",
+      "maps.google.com",
+      "google.com/maps"
+    ],
+    "gtm": [],
+    "cookies": [
+      [
+        "NID",
+        "6mo"
+      ]
+    ],
+    "embed": true
+  },
+  {
+    "id": "infra",
+    "name": "Könyvtárak, betűtípusok, CDN",
+    "cat": "infra",
+    "hosts": [
+      "fonts.googleapis.com",
+      "fonts.gstatic.com",
+      "cdn.jsdelivr.net",
+      "cdnjs.cloudflare.com",
+      "unpkg.com",
+      "ajax.googleapis.com",
+      "code.jquery.com",
+      "s.w.org",
+      "ytimg.com",
+      "secure.gravatar.com",
+      "gstatic.com",
+      "googleapis.com",
+      "google.com",
+      "google.hu",
+      "googletagmanager.com",
+      "use.fontawesome.com",
+      "kit.fontawesome.com",
+      "use.typekit.net"
+    ],
+    "gtm": [],
+    "cookies": []
+  }
+]

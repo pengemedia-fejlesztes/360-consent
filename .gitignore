@@ -1,2 +1,8 @@
 .DS_Store
 node_modules/
+server/c360/data/users.json
+server/c360/data/attempts.json
+server/c360/data/sites/
+server/c360/c360-consent.js
+server/c360/providers.json
+server/c360/admin/defaults.json

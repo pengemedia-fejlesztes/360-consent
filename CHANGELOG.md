@@ -1,5 +1,14 @@
 # Változásnapló
 
+## 1.2.0 – 2026-09-30
+- **Admin** (https://360-marketing.hu/c360/admin/): domainenkénti beállítások belépéssel, a telepítések nyilvántartása (mely domainen, mely oldalakon, milyen verzióval fut), a felismert szolgáltatások és ismeretlen sütik kezelése, élő előnézet.
+- Elhelyezés: középen, fent, lent, bal vagy jobb oldalt, állítható szélességgel.
+- Nagy „Összes elfogadása”, kicsi „Testreszabás” (és kikapcsolható első rétegbeli elutasítás).
+- Nyelvválasztó a bannerben; a látogató választását a `c360_lang` süti jegyzi meg.
+- „Engedélyek beállítása” panel: lenyitható kategóriák, Süti / Időtartam / Leírás tábla; a szolgáltatások magyar és angol leírást kaptak.
+- Az adminban kategóriák ki/be kapcsolhatók, a szolgáltatások átsorolhatók, a szövegek nyelvenként felülírhatók.
+- Telepítés-visszajelzés: a látogatások kis mintája (alapból 2%) jelzi, hol fut a popup és mit ismert fel (süti-érték és IP nélkül).
+
 ## 1.1.0 – 2026-09-30
 - Szolgáltatás-felismerés: a „Testreszabás” nézetben kategóriánként látszik, milyen szolgáltatások (GA4, Clarity, Meta Pixel, YouTube…) futnak az oldalon, a sütijeikkel és azok élettartamával együtt. Forrás: betöltött szkriptek, iframe-ek, hálózati kérések, sütik, a GTM konténer konfigurációja és a `sites/<domain>.json`.
 - Kategórialeírások 14 nyelven.

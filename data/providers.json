@@ -14,7 +14,11 @@
         "c360_consent",
         "1y"
       ]
-    ]
+    ],
+    "desc": {
+      "hu": "A látogató süti-döntését tárolja, hogy ne kelljen minden oldalon újra megadnia.",
+      "en": "Stores the visitor’s cookie choice so it does not have to be made again on every page."
+    }
   },
   {
     "id": "gtm",
@@ -24,7 +28,11 @@
       "googletagmanager.com/gtm.js"
     ],
     "gtm": [],
-    "cookies": []
+    "cookies": [],
+    "desc": {
+      "hu": "Címkekezelő: a hozzájárulásnak megfelelően tölti be a mérő- és hirdetési kódokat. Önmagában nem tesz sütit.",
+      "en": "Tag manager that loads measurement and advertising code according to your consent. Sets no cookies itself."
+    }
   },
   {
     "id": "cookieyes",
@@ -44,7 +52,11 @@
         "cookieyes-consent",
         "1y"
       ]
-    ]
+    ],
+    "desc": {
+      "hu": "Süti-hozzájárulás kezelő; a látogató döntését tárolja.",
+      "en": "Consent management platform; stores the visitor’s choice."
+    }
   },
   {
     "id": "cookiebot",
@@ -63,7 +75,11 @@
         "CookieConsent",
         "1y"
       ]
-    ]
+    ],
+    "desc": {
+      "hu": "Süti-hozzájárulás kezelő; a látogató döntését tárolja.",
+      "en": "Consent management platform; stores the visitor’s choice."
+    }
   },
   {
     "id": "onetrust",
@@ -86,7 +102,11 @@
         "OptanonAlertBoxClosed",
         "1y"
       ]
-    ]
+    ],
+    "desc": {
+      "hu": "Süti-hozzájárulás kezelő; a látogató döntését tárolja.",
+      "en": "Consent management platform; stores the visitor’s choice."
+    }
   },
   {
     "id": "usercentrics",
@@ -100,7 +120,11 @@
     "gtm": [
       "usercentrics.eu"
     ],
-    "cookies": []
+    "cookies": [],
+    "desc": {
+      "hu": "Süti-hozzájárulás kezelő; a látogató döntését tárolja.",
+      "en": "Consent management platform; stores the visitor’s choice."
+    }
   },
   {
     "id": "iubenda",
@@ -119,7 +143,11 @@
         "_iub_cs-*",
         "1y"
       ]
-    ]
+    ],
+    "desc": {
+      "hu": "Süti-hozzájárulás kezelő; a látogató döntését tárolja.",
+      "en": "Consent management platform; stores the visitor’s choice."
+    }
   },
   {
     "id": "complianz",
@@ -136,7 +164,11 @@
         "cmplz_*",
         "1y"
       ]
-    ]
+    ],
+    "desc": {
+      "hu": "Süti-hozzájárulás kezelő; a látogató döntését tárolja.",
+      "en": "Consent management platform; stores the visitor’s choice."
+    }
   },
   {
     "id": "borlabs",
@@ -152,7 +184,11 @@
         "borlabs-cookie",
         "1y"
       ]
-    ]
+    ],
+    "desc": {
+      "hu": "Süti-hozzájárulás kezelő; a látogató döntését tárolja.",
+      "en": "Consent management platform; stores the visitor’s choice."
+    }
   },
   {
     "id": "wordpress",
@@ -176,7 +212,11 @@
         "wp-settings-time-*",
         "1y"
       ]
-    ]
+    ],
+    "desc": {
+      "hu": "A weboldal motorja; a sütik a bejelentkezéshez és a böngésző képességeinek ellenőrzéséhez kellenek.",
+      "en": "The website’s CMS; its cookies are used for login and to check browser capabilities."
+    }
   },
   {
     "id": "woocommerce",
@@ -199,7 +239,11 @@
         "wp_woocommerce_session_*",
         "2d"
       ]
-    ]
+    ],
+    "desc": {
+      "hu": "Webáruház-motor; a kosár tartalmát és a vásárlási munkamenetet tárolja.",
+      "en": "Online store engine; stores the cart contents and the shopping session."
+    }
   },
   {
     "id": "recaptcha",
@@ -216,7 +260,11 @@
         "_GRECAPTCHA",
         "6mo"
       ]
-    ]
+    ],
+    "desc": {
+      "hu": "A Google reCAPTCHA az űrlapokat védi a spam és a robotok ellen.",
+      "en": "Google reCAPTCHA protects forms against spam and bots."
+    }
   },
   {
     "id": "cloudflare",
@@ -240,7 +288,11 @@
         "_cfuvid",
         "s"
       ]
-    ]
+    ],
+    "desc": {
+      "hu": "A Cloudflare a weboldal biztonságát és a robotok kiszűrését szolgálja.",
+      "en": "Cloudflare is used for website security and bot protection."
+    }
   },
   {
     "id": "polylang",
@@ -260,7 +312,11 @@
         "wp-wpml_current_language",
         "s"
       ]
-    ]
+    ],
+    "desc": {
+      "hu": "A kiválasztott nyelvet jegyzi meg.",
+      "en": "Remembers the selected language."
+    }
   },
   {
     "id": "tawk",
@@ -282,7 +338,11 @@
         "twk_uuid_*",
         "6mo"
       ]
-    ]
+    ],
+    "desc": {
+      "hu": "Élő chat; a beszélgetés folytonosságát biztosítja.",
+      "en": "Live chat; keeps the conversation going across pages."
+    }
   },
   {
     "id": "crisp",
@@ -299,7 +359,11 @@
         "crisp-client/*",
         "6mo"
       ]
-    ]
+    ],
+    "desc": {
+      "hu": "Élő chat; a beszélgetés folytonosságát biztosítja.",
+      "en": "Live chat; keeps the conversation going across pages."
+    }
   },
   {
     "id": "tidio",
@@ -311,7 +375,11 @@
     "gtm": [
       "code.tidio.co"
     ],
-    "cookies": []
+    "cookies": [],
+    "desc": {
+      "hu": "Élő chat; a beszélgetés folytonosságát biztosítja.",
+      "en": "Live chat; keeps the conversation going across pages."
+    }
   },
   {
     "id": "ga4",
@@ -343,7 +411,11 @@
         "_gat*",
         "1min"
       ]
-    ]
+    ],
+    "desc": {
+      "hu": "A Google Analytics névtelen statisztikát készít arról, hogyan használják a látogatók az oldalt (látogatások, forrás, oldalmegtekintések).",
+      "en": "Google Analytics collects anonymous statistics on how visitors use the site (visits, sources, page views)."
+    }
   },
   {
     "id": "clarity",
@@ -369,7 +441,11 @@
         "CLID",
         "1y"
       ]
-    ]
+    ],
+    "desc": {
+      "hu": "A Microsoft Clarity hőtérképekkel és munkamenet-visszajátszással mutatja meg, hogyan használják az oldalt.",
+      "en": "Microsoft Clarity shows how the site is used through heatmaps and session replays."
+    }
   },
   {
     "id": "hotjar",
@@ -392,7 +468,11 @@
         "_hjSession_*",
         "30min"
       ]
-    ]
+    ],
+    "desc": {
+      "hu": "A Hotjar hőtérképekkel és felvételekkel elemzi az oldal használatát.",
+      "en": "Hotjar analyses site usage with heatmaps and recordings."
+    }
   },
   {
     "id": "matomo",
@@ -416,7 +496,11 @@
         "_pk_ses.*",
         "30min"
       ]
-    ]
+    ],
+    "desc": {
+      "hu": "A Matomo névtelen látogatottsági statisztikát készít.",
+      "en": "Matomo collects anonymous visitor statistics."
+    }
   },
   {
     "id": "yandex",
@@ -438,7 +522,11 @@
         "_ym_d",
         "1y"
       ]
-    ]
+    ],
+    "desc": {
+      "hu": "A Yandex Metrica látogatottsági statisztikát készít.",
+      "en": "Yandex Metrica collects visitor statistics."
+    }
   },
   {
     "id": "smartlook",
@@ -450,7 +538,11 @@
     "gtm": [
       "smartlook.com"
     ],
-    "cookies": []
+    "cookies": [],
+    "desc": {
+      "hu": "A Smartlook munkamenet-felvételekkel elemzi az oldal használatát.",
+      "en": "Smartlook analyses site usage with session recordings."
+    }
   },
   {
     "id": "vimeo",
@@ -467,7 +559,11 @@
         "2y"
       ]
     ],
-    "embed": true
+    "embed": true,
+    "desc": {
+      "hu": "A Vimeo a beágyazott videók lejátszásához és méréséhez használja.",
+      "en": "Used by Vimeo to play and measure embedded videos."
+    }
   },
   {
     "id": "google-ads",
@@ -495,7 +591,11 @@
         "_gcl_aw",
         "3mo"
       ]
-    ]
+    ],
+    "desc": {
+      "hu": "A Google Ads a hirdetésekre kattintást és a konverziókat méri.",
+      "en": "Google Ads measures ad clicks and conversions."
+    }
   },
   {
     "id": "doubleclick",
@@ -519,7 +619,11 @@
         "test_cookie",
         "15min"
       ]
-    ]
+    ],
+    "desc": {
+      "hu": "A Google hirdetési hálózata a hirdetések megjelenítéséhez és méréséhez használja.",
+      "en": "Used by Google’s ad network to show and measure ads."
+    }
   },
   {
     "id": "adsense",
@@ -542,7 +646,11 @@
         "__gpi",
         "13mo"
       ]
-    ]
+    ],
+    "desc": {
+      "hu": "A Google AdSense hirdetéseket jelenít meg és mér.",
+      "en": "Google AdSense shows and measures ads."
+    }
   },
   {
     "id": "meta",
@@ -565,7 +673,11 @@
         "_fbc",
         "3mo"
       ]
-    ]
+    ],
+    "desc": {
+      "hu": "A Meta (Facebook) Pixel a hirdetések mérésére és a korábbi látogatóknak szóló hirdetésekre szolgál a Facebookon és az Instagramon.",
+      "en": "Meta (Facebook) Pixel measures ads and enables ads to past visitors on Facebook and Instagram."
+    }
   },
   {
     "id": "tiktok",
@@ -587,7 +699,11 @@
         "_tt_enable_cookie",
         "13mo"
       ]
-    ]
+    ],
+    "desc": {
+      "hu": "A TikTok Pixel a TikTok-hirdetések mérésére és célzására szolgál.",
+      "en": "TikTok Pixel measures and targets TikTok ads."
+    }
   },
   {
     "id": "linkedin",
@@ -618,7 +734,11 @@
         "lidc",
         "1d"
       ]
-    ]
+    ],
+    "desc": {
+      "hu": "A LinkedIn Insight Tag a LinkedIn-hirdetések mérésére és célzására szolgál.",
+      "en": "LinkedIn Insight Tag measures and targets LinkedIn ads."
+    }
   },
   {
     "id": "bing-ads",
@@ -643,7 +763,11 @@
         "MUID",
         "1y"
       ]
-    ]
+    ],
+    "desc": {
+      "hu": "A Microsoft Advertising a Bing-hirdetések konverzióit méri.",
+      "en": "Microsoft Advertising measures Bing ad conversions."
+    }
   },
   {
     "id": "pinterest",
@@ -665,7 +789,11 @@
         "_pin_unauth",
         "1y"
       ]
-    ]
+    ],
+    "desc": {
+      "hu": "A Pinterest Tag a Pinterest-hirdetések mérésére szolgál.",
+      "en": "Pinterest Tag measures Pinterest ads."
+    }
   },
   {
     "id": "x-ads",
@@ -689,7 +817,11 @@
         "muc_ads",
         "13mo"
       ]
-    ]
+    ],
+    "desc": {
+      "hu": "Az X (Twitter) Pixel az X-hirdetések mérésére szolgál.",
+      "en": "X (Twitter) Pixel measures X ads."
+    }
   },
   {
     "id": "snapchat",
@@ -708,7 +840,11 @@
         "_scid",
         "13mo"
       ]
-    ]
+    ],
+    "desc": {
+      "hu": "A Snap Pixel a Snapchat-hirdetések mérésére szolgál.",
+      "en": "Snap Pixel measures Snapchat ads."
+    }
   },
   {
     "id": "hubspot",
@@ -740,7 +876,11 @@
         "__hssrc",
         "s"
       ]
-    ]
+    ],
+    "desc": {
+      "hu": "A HubSpot a látogatókat és az érdeklődőket követi a marketing-automatizáláshoz.",
+      "en": "HubSpot tracks visitors and leads for marketing automation."
+    }
   },
   {
     "id": "youtube",
@@ -766,7 +906,11 @@
         "6mo"
       ]
     ],
-    "embed": true
+    "embed": true,
+    "desc": {
+      "hu": "A YouTube a beágyazott videók lejátszásához, a nézettség méréséhez és a hirdetések személyre szabásához használja.",
+      "en": "Used by YouTube to play embedded videos, measure views and personalise ads."
+    }
   },
   {
     "id": "google-maps",
@@ -784,7 +928,11 @@
         "6mo"
       ]
     ],
-    "embed": true
+    "embed": true,
+    "desc": {
+      "hu": "A Google Térkép a beágyazott térkép megjelenítéséhez és a beállítások megjegyzéséhez használja.",
+      "en": "Used by Google Maps to show the embedded map and remember preferences."
+    }
   },
   {
     "id": "infra",
@@ -811,6 +959,10 @@
       "use.typekit.net"
     ],
     "gtm": [],
-    "cookies": []
+    "cookies": [],
+    "desc": {
+      "hu": "Betűtípusok, könyvtárak és tartalomkiszolgálók; sütit nem tesznek.",
+      "en": "Fonts, libraries and CDNs; they set no cookies."
+    }
   }
 ]

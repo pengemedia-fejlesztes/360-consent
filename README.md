@@ -23,6 +23,22 @@ A 360 Marketing saját, ingyenes GCMv2 süti bannere. Google Tag Managerből tö
 6. Kapcsold ki a régi CMP-t (CookieYes, Cookiebot stb.) és minden más `gtag('consent','default')` kódot. Egy oldalon csak egy consent default futhat.
 7. Ürítsd a cache-t, majd teszteld inkognitóban, GTM Preview-val.
 
+## Admin
+
+**https://360-marketing.hu/c360/admin/** – a belépési adatok helyben: `~/.config/360-consent/admin.env`.
+
+- **Domainek:** minden domain, ahol a popup fut. A popup a látogatások kis mintájából visszajelez, így az új telepítések „Felfedezett” állapotban maguktól megjelennek. Az itt megadott beállítások csak **Aktív** állapotban érvényesülnek.
+- **Telepítés:** mely oldalakon, milyen verzióval és nyelven fut; a GTM-telepítés kódja.
+- **Megjelenés:** elhelyezés (középen / fent / lent / bal / jobb), szélesség, gombok, szín, tájékoztató URL.
+- **Nyelv és szöveg:** automatikus vagy rögzített nyelv, nyelvválasztó, felkínált nyelvek, szövegek felülírása nyelvenként.
+- **Kategóriák:** ki/be kapcsolás, leírás nyelvenként, mi tartozik bele.
+- **Szolgáltatások és sütik:** átsorolás másik kategóriába, elrejtés, leírás; az ismeretlen sütik besorolása. Az átsorolás a banner besorolását módosítja, a tényleges betöltést a GTM tag consent-feltétele szabja meg, ezért azt is igazítsd.
+- A beállítás mentés után legfeljebb 5 percen belül él (a böngészők ennyi ideig cache-elik).
+
+Szerveroldal: `server/c360/` (PHP 7.4+, JSON-tárolás a `data/` mappában, amely kívülről tiltott). Frissítés: `node tools/build.mjs && tools/deploy-server.sh` (a `data/`-hoz nem nyúl).
+
+Nyilvános végpontok: `api/config.php?host=domain.hu` (a banner beállításai, 5 perc cache) és `api/ping.php` (telepítés-visszajelzés, csak a saját domainről, domainenként legfeljebb 20 mp-enként).
+
 ## Az oldal JS-térképe (szolgáltatás-felismerés)
 
 A banner „Testreszabás” nézetében kategóriánként, a sütikkel és az élettartamokkal együtt látszik, milyen szolgáltatások futnak az oldalon. Ez csak a nézet megnyitásakor fut, így az oldalbetöltést nem lassítja. Források:
@@ -47,7 +63,7 @@ Böngészőből, bármelyik telepített oldalon: `C360Consent.scan()` a konzolba
 
 ## `C360_CONFIG` beállítások
 
-`policyUrl`, `brandColor`, `position` (`left`/`right`), `cookieDomain`, `forceLang`, `defaultLang`, `showBranding`, `brandUrl`, `cookieDays`, `siteData` (a szkennelt JSON címe, `false` = ki), `scanGtm` (`false` = a GTM konténert nem elemzi).
+`api` (az admin API címe, `''` = ki), `placement` (`center`/`top`/`bottom`/`left`/`right`), `size` (szélesség %), `acceptLarge`, `showReject`, `langSwitcher`, `languages`, `texts`, `categories`, `services`, `pingRate`, `policyUrl`, `brandColor`, `position` (a süti ikon helye: `left`/`right`), `cookieDomain`, `forceLang`, `defaultLang`, `showBranding`, `brandUrl`, `cookieDays`, `siteData` (a szkennelt JSON címe, `false` = ki), `scanGtm` (`false` = a GTM konténert nem elemzi).
 
 ## Kiadás (globális frissítés)
 

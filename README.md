@@ -27,6 +27,8 @@ A 360 Marketing saját, ingyenes GCMv2 süti bannere. Google Tag Managerből tö
 
 **https://360-marketing.hu/c360/admin/** – a belépési adatok helyben: `~/.config/360-consent/admin.env`.
 
+Elfelejtett jelszó vagy kizárás (5 hibás próbálkozás után 15 perc tiltás): `tools/admin-password.sh`. A terminálban kéri az új jelszót, csak a hash-ét tölti fel, feloldja a tiltást, és frissíti az `admin.env`-et.
+
 - **Domainek:** minden domain, ahol a popup fut. A popup a látogatások kis mintájából visszajelez, így az új telepítések „Felfedezett” állapotban maguktól megjelennek. Az itt megadott beállítások csak **Aktív** állapotban érvényesülnek.
 - **Telepítés:** mely oldalakon, milyen verzióval és nyelven fut; a GTM-telepítés kódja.
 - **Megjelenés:** elhelyezés (középen / fent / lent / bal / jobb), szélesség, gombok, szín, tájékoztató URL.

@@ -212,9 +212,8 @@
     });
     var size = +val('size', 0);
     var sizeOut = h('output', { text: size ? size + '%' : 'alap' });
-    var sizeRow = pl === 'top' || pl === 'bottom' ? h('p', { class: 'muted', text: 'Felül és alul a sáv a teljes szélességet kitölti.' }) :
-      h('label', null, (pl === 'center' ? 'Szélesség a képernyő %-ában' : 'Panel szélessége a képernyő %-ában') + ' ',
-        h('input', { type: 'range', min: '0', max: '90', step: '5', value: String(size), oninput: function () { set('size', +this.value); sizeOut.textContent = +this.value ? this.value + '%' : 'alap'; } }), ' ', sizeOut);
+    var sizeRow = h('label', null, (pl === 'center' ? 'Méret a látható képernyő %-ában (szélesség és magasság is; 0 = alap)' : pl === 'top' || pl === 'bottom' ? 'Sáv magassága a képernyő %-ában' : 'Panel szélessége a képernyő %-ában') + ' ',
+        h('input', { type: 'range', min: '0', max: '100', step: '5', value: String(size), oninput: function () { set('size', +this.value); sizeOut.textContent = +this.value ? this.value + '%' : 'alap'; } }), ' ', sizeOut);
     add(body, [
       h('div', { class: 'card' }, h('h2', { text: 'Elhelyezés' }), h('div', { class: 'places' }, cards), sizeRow),
       h('div', { class: 'card' }, h('h2', { text: 'Gombok' }),
@@ -234,7 +233,7 @@
     ]);
   }
   function check(k, def, label) {
-    return h('label', { class: 'check' }, h('input', { type: 'checkbox', checked: val(k, def), onchange: function () { set(k, this.checked); if (k === 'showReject') siteView(); } }), ' ' + label);
+    return h('label', { class: 'check' }, h('input', { type: 'checkbox', checked: val(k, def), onchange: function () { set(k, this.checked); if (k === 'showReject' || k === 'preChecked') siteView(); } }), ' ' + label);
   }
 
   // Saját CSS és JS a banner dizájnjához
@@ -290,6 +289,11 @@
       h('label', { class: 'check' }, h('input', { type: 'checkbox', checked: st.enabled, onchange: function () { site.gtmSync.settings.enabled = this.checked; touch(); } }), ' Consent-feltételek automatikus beállítása a GTM-ben'),
       h('label', { class: 'check' }, h('input', { type: 'checkbox', checked: st.autoPublish, onchange: function () { site.gtmSync.settings.autoPublish = this.checked; touch(); } }), ' A módosításokat automatikusan közzé is teszi (különben a GTM munkaterületen publikálásra várnak)'),
       h('p', { class: 'muted small', text: 'A szinkront a 360 gépén futó eszköz végzi a Google-fiók jogosultságával (tools/gtm-sync.mjs). Az eredménye alább jelenik meg.' })));
+    add(body, h('div', { class: 'card' }, h('h2', { text: 'Mérés elutasításkor (Consent Mode advanced)' }),
+      h('p', { class: 'muted', text: 'A Google tagek (GA4, Google tag, Ads) hozzájárulás nélkül is lefutnak, de sütit nem tesznek: névtelen, süti nélküli jeleket küldenek, amiből a Google modellezi a látogatásokat és konverziókat. Ehhez a Google tagekre nem szabad külön consent-feltételt tenni (a szinkron ezt így hagyja).' }),
+      check('urlPassthrough', false, 'url_passthrough: a hirdetési kattintás és a mérési azonosító az oldalak közti linkekben megy tovább (_gl=… paraméter), így elutasításkor is követhető a látogatás útja'),
+      check('adsRedaction', true, 'ads_data_redaction: elutasításkor a hirdetési adatok kitakarása'),
+      h('p', { class: 'muted small', text: 'Ez a két beállítás a GTM „360 Consent – Init” tagjébe kerül a szinkronnal (a Consent Initialization előtt kell érvényesülnie).' })));
     var sc = site.scan || {};
     if (snap) {
       add(body, h('div', { class: 'card flush' }, h('div', { class: 'pad' }, h('h2', { text: 'GTM tagek – ' + snap.container + ' (élő: v' + snap.liveVersion + ')' }),
@@ -376,6 +380,10 @@
   // 4. Kategóriák
   function tabCats(body) {
     var svcs = allServices();
+    add(body, h('div', { class: 'card' }, h('h2', { text: 'Megjelenítés' }),
+      check('hideEmpty', true, 'Csak az a kategória jelenjen meg, amelyikben van felismert szolgáltatás'),
+      check('preChecked', false, 'Minden kapcsoló alapból bekapcsolva (a látogató első megnyitásakor)'),
+      val('preChecked', false) ? h('p', { class: 'alert', text: 'Figyelem: az EU Bíróság (C-673/17, Planet49) szerint az előre bejelölt hozzájárulás érvénytelen. Ha a látogató a bekapcsolt állapotot menti, a hozzájárulás jogilag vitatható.' }) : null));
     add(body, [h('div', { class: 'row between' }, h('p', { class: 'muted', text: 'Minden kategória egy Consent Mode jóváhagyásnak felel meg. A leírás a bannerben a kategória alatt jelenik meg.' }), langPicker(siteView))]);
     Object.keys(CATS).forEach(function (k) {
       var c = cfg.categories[k] || {}, en = k === 'necessary' || c.enabled !== false;

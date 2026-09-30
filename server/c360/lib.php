@@ -115,7 +115,7 @@ function c360_clean_config($c): array
     $o = [];
     if (in_array($c['placement'] ?? '', C360_PLACEMENTS, true)) $o['placement'] = $c['placement'];
     if (isset($c['size']) && is_numeric($c['size'])) $o['size'] = max(0, min(100, (int)$c['size']));
-    foreach (['acceptLarge', 'showReject', 'showRejectPanel', 'langSwitcher', 'showBranding'] as $k) if (isset($c[$k])) $o[$k] = (bool)$c[$k];
+    foreach (['acceptLarge', 'showReject', 'showRejectPanel', 'langSwitcher', 'showBranding', 'preChecked', 'hideEmpty', 'urlPassthrough', 'adsRedaction'] as $k) if (isset($c[$k])) $o[$k] = (bool)$c[$k];
     if (isset($c['pingRate']) && is_numeric($c['pingRate'])) $o['pingRate'] = max(0, min(1, (float)$c['pingRate']));
     // Saját dizájn: CSS a banner stílusai után, JS a banner felépítése után fut (csak adminból állítható).
     if (isset($c['customCss']) && trim((string)$c['customCss']) !== '') $o['customCss'] = substr((string)$c['customCss'], 0, 20000);

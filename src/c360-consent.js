@@ -29,7 +29,10 @@
     languages: [],                  // a nyelvválasztóban felkínált nyelvek; üres = mind
     langSwitcher: true,             // nyelvválasztó a bannerben
     placement: 'center',            // a banner helye: 'center' | 'top' | 'bottom' | 'left' | 'right'
-    size: 0,                        // center/left/right: szélesség a képernyő %-ában (0 = alap)
+    size: 0,                        // a képernyő %-a: középen szélesség ÉS magasság, bal/jobb: szélesség, fent/lent: magasság (0 = alap)
+    preChecked: false,              // a Testreszabás panelen a kapcsolók alapból bekapcsolva (első látogatáskor)
+    hideEmpty: true,                // csak az a kategória jelenik meg, amelyikben van felismert szolgáltatás
+    known: [],                      // a szerver által ismert szolgáltatások (szkennelés + visszajelzések)
     acceptLarge: true,              // nagy „Összes elfogadása”, kicsi „Testreszabás”
     showReject: true,               // „Összes elutasítása” már az első rétegben
     showRejectPanel: true,          // „Összes elutasítása” a Testreszabás panelen
@@ -258,14 +261,16 @@
     if (p.length !== 4 || p[0] !== 'v1') return null;
     return { necessary: true, preferences: p[1] === '1', statistics: p[2] === '1', marketing: p[3] === '1' };
   }
-  function setCookie(name, value, days) {
-    var exp = new Date(Date.now() + days * 864e5).toUTCString();
-    try { d.cookie = name + '=' + value + '; expires=' + exp + '; path=/; SameSite=Lax' +
+  function setCookie(name, value, days) { // days = 0: munkamenet-süti (a böngésző bezárásáig)
+    var exp = days ? '; expires=' + new Date(Date.now() + days * 864e5).toUTCString() : '';
+    try { d.cookie = name + '=' + value + exp + '; path=/; SameSite=Lax' +
       (CONFIG.cookieDomain ? '; domain=' + CONFIG.cookieDomain : '') +
       (location.protocol === 'https:' ? '; Secure' : ''); } catch (e) { /* sandbox */ }
   }
   function writeState(s) {
-    setCookie(CONFIG.cookieName, ['v1', s.preferences ? 1 : 0, s.statistics ? 1 : 0, s.marketing ? 1 : 0].join('.'), CONFIG.cookieDays);
+    // Hozzájárulás esetén 1 évig marad; teljes elutasításnál csak a böngésző bezárásáig, utána újra megkérdezzük.
+    var any = s.preferences || s.statistics || s.marketing;
+    setCookie(CONFIG.cookieName, ['v1', s.preferences ? 1 : 0, s.statistics ? 1 : 0, s.marketing ? 1 : 0].join('.'), any ? CONFIG.cookieDays : 0);
   }
 
   // --- Consent Mode v2 update + GTM esemény ---
@@ -292,8 +297,20 @@
   function catEnabled(k) {
     return k === 'necessary' || !(CONFIG.categories[k] && CONFIG.categories[k].enabled === false);
   }
+  // Megjelenik-e a panelen: be van kapcsolva, és (ha az üresek rejtve vannak) van benne szolgáltatás.
+  function catVisible(k, svcs) {
+    if (k === 'necessary') return true;
+    if (!catEnabled(k)) return false;
+    if (!CONFIG.hideEmpty) return true;
+    for (var id in svcs) if (svcs[id].cat === k) return true;
+    return false;
+  }
   function serviceList(report) {
     var out = {}, i, id;
+    for (i = 0; i < (CONFIG.known || []).length; i++) {
+      var kp = BY_ID[CONFIG.known[i]];
+      if (kp && kp.cat !== 'infra') out[kp.id] = { id: kp.id, name: kp.name, cat: kp.cat, cookies: kp.cookies || [], desc: kp.desc };
+    }
     for (id in report.services) {
       var p = BY_ID[id] || report.services[id];
       out[id] = { id: id, name: p.name, cat: p.cat, cookies: p.cookies || [], desc: p.desc };
@@ -322,6 +339,10 @@
     var side = CONFIG.position === 'right' ? 'right' : 'left';
     var pl = CONFIG.placement, size = +CONFIG.size || 0;
     var dlgW = pl === 'center' ? (size ? size + 'vw' : '560px') : pl === 'left' || pl === 'right' ? (size ? size + 'vw' : '420px') : '100%';
+    // A megadott % a teljes látható képernyőre vonatkozik: középen szélességre és magasságra is (négyzetes képernyőn négyzetes lesz).
+    var sized = pl === 'center' && size ? '#c360.c360--center .c360-dlg,#c360.c360--prefs .c360-dlg{width:' + size + 'vw!important;height:' + size + 'vh!important;max-height:' + size + 'vh!important;min-width:0!important;max-width:' + size + 'vw!important}' +
+      '#c360.c360--center .c360-dlg{display:flex;flex-direction:column;justify-content:center}' : '';
+    if ((pl === 'top' || pl === 'bottom') && size) sized = '#c360.c360--' + pl + ' .c360-dlg{height:' + size + 'vh;max-height:' + size + 'vh!important;display:flex;flex-direction:column;justify-content:center}';
     return '#c360,#c360 *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.5;letter-spacing:normal;text-transform:none}' +
       '#c360[hidden],#c360 [hidden]{display:none!important}' +
       '#c360{position:fixed;inset:0;z-index:2147483000;display:flex;padding:16px;pointer-events:none}' +
@@ -389,13 +410,15 @@
       '#c360-fab[hidden]{display:none}' +
       '#c360-fab svg{width:24px;height:24px}' +
       '#c360-fab:focus-visible{outline:2px solid #1f2a33;outline-offset:2px}' +
+      (sized && pl === 'center' ? '@media (max-width:640px){#c360 .c360-dlg{padding:20px 16px}}' :
       '@media (max-width:640px){#c360{padding:0;align-items:flex-end!important;justify-content:center!important}' +
-      '#c360 .c360-dlg{width:100%!important;min-width:0!important;height:auto!important;max-height:88vh!important;border-radius:14px 14px 0 0!important;padding:20px 16px}' +
+      '#c360 .c360-dlg{width:100%!important;min-width:0!important;height:auto!important;max-height:88vh!important;border-radius:14px 14px 0 0!important;padding:20px 16px}}') +
+      '@media (max-width:640px){' +
       '#c360.c360--prefs .c360-dlg{padding:0}' +
       '#c360 .c360-title{font-size:19px}#c360 .c360-text{font-size:15px}' +
       '#c360 .c360-btns .c360-btn,#c360 .c360-btns--lg .c360-btn{flex:1 1 100%}' +
       '#c360 .c360-row{grid-template-columns:90px 1fr}#c360 .c360-desc,#c360 .c360-list{margin-left:0}}' +
-      (CONFIG.customCss ? '\n/* saját CSS */\n' + String(CONFIG.customCss) : '');
+      sized + (CONFIG.customCss ? '\n/* saját CSS */\n' + String(CONFIG.customCss) : '');
   }
 
   // Események a saját JS-nek és a weboldalnak: c360:render (detail.view), c360:decision (detail.state)
@@ -484,7 +507,7 @@
         '<div class="c360-tools">' + toolsHtml().replace(/^<div class="c360-tools">|<\/div>$/g, '') +
         '<button type="button" class="c360-x" data-act="close" aria-label="' + esc(t('close')) + '">&times;</button></div></div>' +
       '<div class="c360-pbody"><p class="c360-intro">' + esc(t('text')) + policyLink() + '</p>' +
-        CATS.filter(catEnabled).map(function (k) { return catHtml(k, svcs); }).join('') + '</div>' +
+        CATS.filter(function (k) { return catVisible(k, svcs); }).map(function (k) { return catHtml(k, svcs); }).join('') + '</div>' +
       '<div class="c360-pfoot"><div class="c360-btns">' + (CONFIG.showRejectPanel ? btn('reject', t('rejectAll')) : '') + btn('save', t('save')) + btn('accept', t('acceptAll'), true) + '</div></div>' +
     '</div>';
   }
@@ -506,8 +529,8 @@
   }
 
   function open(prefs) {
-    var s = readState();
-    draft = { preferences: !!(s && s.preferences), statistics: !!(s && s.statistics), marketing: !!(s && s.marketing) };
+    var s = readState(), pre = !s && !!CONFIG.preChecked;
+    draft = { preferences: pre || !!(s && s.preferences), statistics: pre || !!(s && s.statistics), marketing: pre || !!(s && s.marketing) };
     view = prefs ? 'prefs' : 'notice';
     lastFocus = d.activeElement;
     root.hidden = false;
@@ -550,7 +573,11 @@
     if (act === 'accept') decide({ preferences: true, statistics: true, marketing: true });
     else if (act === 'reject') decide({ preferences: false, statistics: false, marketing: false });
     else if (act === 'customize') { view = 'prefs'; render('[data-act="save"]'); scanForPrefs(); }
-    else if (act === 'save') { collectDraft(); decide({ preferences: draft.preferences, statistics: draft.statistics, marketing: draft.marketing }); }
+    else if (act === 'save') {
+      collectDraft();
+      var sv = serviceList(lastReport || newReport()); // a nem látható (üres) kategória nem kap hozzájárulást
+      decide({ preferences: catVisible('preferences', sv) && draft.preferences, statistics: catVisible('statistics', sv) && draft.statistics, marketing: catVisible('marketing', sv) && draft.marketing });
+    }
     else if (act === 'close') { if (hasDecision) close(); else { view = 'notice'; render('[data-act="customize"]'); } }
     else if (act === 'more') {
       var k = tg.getAttribute('data-more'), ul = $('#c360-list-' + k);

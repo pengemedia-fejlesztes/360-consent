@@ -1,5 +1,14 @@
 # Változásnapló
 
+## 1.4.0 – 2026-09-30
+- A méret a teljes látható képernyő %-a: középen szélességre és magasságra is (négyzetes képernyőn négyzetes), fent/lent a sáv magassága.
+- A beállítás azonnal él: a konfiguráció ETag-gel, cache nélkül megy (304, ha nem változott).
+- Csak a tartalommal rendelkező kategóriák jelennek meg (a szerver ismert szolgáltatásai alapján); kikapcsolható.
+- Admin: „Minden kapcsoló alapból bekapcsolva” (figyelmeztetéssel).
+- Anonim mérés elutasításkor: url_passthrough és ads_data_redaction az adminból, a GTM Init tagbe a szinkronnal.
+- A 360 Consent sütije elfogadáskor 1 évig, elutasításkor csak a böngésző bezárásáig él.
+- A Google Tag Manager a Statisztika kategóriában jelenik meg.
+
 ## 1.3.0 – 2026-09-30
 - **Szerveroldali feltérképezés:** a szerver maga szkenneli az oldalt (sitemap + GTM konténer), domainenként állítható gyakorisággal (naponta … havonta) és léptékkel (5–100 oldal); a látogatói visszajelzés aránya is állítható. „Szkennelés most” gomb az adminban. Az ütemezett szkennelés a konfiguráció-kérés után, a válasz lezárása után fut.
 - **GTM fül:** a konténer tagjei típussal, szolgáltatással, kategóriával és consent-feltétellel.

@@ -17,14 +17,14 @@
       ]
     ],
     "desc": {
-      "hu": "A látogató süti-döntését tárolja, hogy ne kelljen minden oldalon újra megadnia.",
-      "en": "Stores the visitor’s cookie choice so it does not have to be made again on every page."
+      "hu": "A látogató süti-döntését tárolja: hozzájárulás esetén 1 évig, elutasításkor csak a böngésző bezárásáig (utána a banner újra megjelenik).",
+      "en": "Stores the visitor’s cookie choice: for 1 year if consent is given, until the browser is closed if refused (then the banner is shown again)."
     }
   },
   {
     "id": "gtm",
     "name": "Google Tag Manager",
-    "cat": "necessary",
+    "cat": "statistics",
     "hosts": [
       "googletagmanager.com/gtm.js"
     ],

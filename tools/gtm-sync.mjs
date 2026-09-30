@@ -107,6 +107,17 @@ function classify(tag, live, siteCfg) {
   const pageLevel = (tag.firingTriggerId || []).some((id) => PAGE_TRIGGERS.has(id) ||
     ['pageview', 'domReady', 'windowLoaded'].includes((live.trigger || []).find((t) => t.triggerId === id)?.type));
   out.required = out.cat ? CONSENT_REQ[out.cat] : null;
+  // A 360 Consent Init tag: az admin anonim-mérés beállításai (url_passthrough, ads_data_redaction) ide kerülnek.
+  if (type === 'cvt' && out.service === 'c360' && /c360_consent/.test(JSON.stringify(live.customTemplate || []))) {
+    const want = { urlPassthrough: !!siteCfg.urlPassthrough, adsDataRedaction: siteCfg.adsRedaction !== false };
+    const cur = { urlPassthrough: param(tag, 'urlPassthrough') === 'true', adsDataRedaction: param(tag, 'adsDataRedaction') === 'true' };
+    if ((tag.parameter || []).some((p) => p.key === 'waitForUpdate')) {
+      out.init = want;
+      out.consent = [`url_passthrough: ${cur.urlPassthrough ? 'be' : 'ki'}`, `ads_data_redaction: ${cur.adsDataRedaction ? 'be' : 'ki'}`];
+      out.status = cur.urlPassthrough === want.urlPassthrough && cur.adsDataRedaction === want.adsDataRedaction ? 'ok' : 'missing';
+      return out;
+    }
+  }
   if (out.paused) out.status = 'paused';
   else if (out.builtin || out.service === 'c360' || (out.required && !out.required.length)) out.status = 'skip';
   else if (!out.service) out.status = out.consent.length ? 'ok' : 'unknown';
@@ -151,6 +162,17 @@ async function syncSite(site) {
       customEventFilter: [{ type: 'equals', parameter: [{ type: 'template', key: 'arg0', value: '{{_event}}' }, { type: 'template', key: 'arg1', value: 'gtm_consent_update' }] }] });
     for (const t of todo) {
       const cur = await gtm('GET', `${ws.path}/tags/${t.id}`);
+      if (t.init) { // Init tag paraméterei
+        for (const [k, v] of Object.entries(t.init)) {
+          const p = (cur.parameter || []).find((x) => x.key === k);
+          if (p) p.value = String(v); else (cur.parameter = cur.parameter || []).push({ type: 'boolean', key: k, value: String(v) });
+        }
+        await gtm('PUT', cur.path, cur);
+        t.status = 'fixed'; changes++;
+        t.consent = [`url_passthrough: ${t.init.urlPassthrough ? 'be' : 'ki'}`, `ads_data_redaction: ${t.init.adsDataRedaction ? 'be' : 'ki'}`];
+        log.push(`#${t.id} ${t.name}: ${t.consent.join(', ')}`);
+        continue;
+      }
       cur.consentSettings = { consentStatus: 'needed', consentType: { type: 'list', list: t.required.map((v) => ({ type: 'template', value: v })) } };
       if (t.needsTrigger && !(cur.firingTriggerId || []).includes(upd.triggerId)) cur.firingTriggerId = [...(cur.firingTriggerId || []), upd.triggerId];
       if (t.needsTrigger) cur.tagFiringOption = 'oncePerLoad';
@@ -173,7 +195,7 @@ async function syncSite(site) {
 
   const snapshot = { container: publicId, accountId: c.accountId, containerId: c.containerId, liveVersion: live.containerVersionId,
     syncedAt: new Date().toISOString(), applied: APPLY && !!settings.enabled, pending, workspaceId, changes, log,
-    tags: tags.map(({ needsTrigger, required, ...t }) => t) };
+    tags: tags.map(({ needsTrigger, required, init, ...t }) => t) };
   if (!TEST) await admin('gtm-snapshot', { host, snapshot });
   else console.log(`  (teszt: az admin pillanatképe nem frissült; munkaterület: ${workspaceId || '–'})`);
 

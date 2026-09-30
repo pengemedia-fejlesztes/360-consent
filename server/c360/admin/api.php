@@ -81,6 +81,10 @@ switch ($a) {
         $host = c360_host($body['host'] ?? '');
         $s = $host ? c360_load_site($host) : null;
         if (!$s) c360_json(['error' => 'notfound'], 404);
+        // Ütközésvédelem: ha a betöltés óta más mentett, nem írjuk felül csendben.
+        if (!empty($body['updated']) && ($s['updated'] ?? '') !== $body['updated']) {
+            c360_json(['error' => 'Közben ' . ($s['updatedBy'] ?? 'valaki') . ' módosította ezt a domaint (' . ($s['updated'] ?? '') . '). Töltsd újra az oldalt, és ismételd meg a módosítást.'], 409);
+        }
         if (in_array($body['status'] ?? '', ['active', 'discovered', 'disabled'], true)) $s['status'] = $body['status'];
         $s['config'] = c360_clean_config($body['config'] ?? []);
         if (isset($body['scanSettings'])) $s['scanSettings'] = c360_clean_scan_settings($body['scanSettings']);
@@ -88,7 +92,7 @@ switch ($a) {
         $s['updated'] = gmdate('c');
         $s['updatedBy'] = $user;
         c360_write(c360_site_file($host), $s);
-        c360_json(['ok' => true, 'config' => $s['config'], 'status' => $s['status'], 'scanSettings' => $s['scanSettings'] ?? null, 'gtmSettings' => $s['gtmSync']['settings'] ?? null]);
+        c360_json(['ok' => true, 'updated' => $s['updated'], 'config' => $s['config'], 'status' => $s['status'], 'scanSettings' => $s['scanSettings'] ?? null, 'gtmSettings' => $s['gtmSync']['settings'] ?? null]);
 
     case 'delete':
         if (!$post) c360_json(['error' => 'method'], 405);

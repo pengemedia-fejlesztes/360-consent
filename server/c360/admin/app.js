@@ -161,8 +161,8 @@
   }
 
   function save() {
-    api('save', { host: site.host, status: site.status, config: cfg, scanSettings: site.scanSettings, gtmSettings: site.gtmSync.settings }).then(function (r) {
-      site.config = r.config; site.status = r.status; site.updated = new Date().toISOString();
+    api('save', { host: site.host, updated: site.updated, status: site.status, config: cfg, scanSettings: site.scanSettings, gtmSettings: site.gtmSync.settings }).then(function (r) {
+      site.config = r.config; site.status = r.status; site.updated = r.updated;
       if (r.scanSettings) site.scanSettings = r.scanSettings;
       if (r.gtmSettings) site.gtmSync.settings = r.gtmSettings;
       dirty = false; siteView();

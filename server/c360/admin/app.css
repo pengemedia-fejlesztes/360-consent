@@ -116,3 +116,7 @@ pre.code { background: color-mix(in srgb, var(--fg) 6%, transparent); padding: 1
   .top { padding: 10px 12px; }
   table.grid th, table.grid td { padding: 8px; }
 }
+
+textarea.mono { font-family: ui-monospace, Menlo, monospace; font-size: 13px; }
+.badge.bad { background: color-mix(in srgb, var(--bad) 15%, transparent); color: var(--bad); }
+.card .pad { padding: 18px 18px 0; }

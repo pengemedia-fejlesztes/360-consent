@@ -38,10 +38,33 @@ switch ($a) {
         $host = c360_host($_GET['host'] ?? '');
         $s = $host ? c360_load_site($host) : null;
         if (!$s) c360_json(['error' => 'notfound'], 404);
-        // A szkenner eredménye (tools/scan.mjs) is látszódjon, ha van.
-        $scan = @file_get_contents('https://cdn.jsdelivr.net/gh/pengemedia-fejlesztes/360-consent@main/sites/' . $host . '.json', false, stream_context_create(['http' => ['timeout' => 4]]));
-        $s['scan'] = $scan ? json_decode($scan, true) : null;
+        $s['scanSettings'] = c360_clean_scan_settings($s['scanSettings'] ?? ['enabled' => true]);
+        $s['gtmSync'] = $s['gtmSync'] ?? [];
+        $s['gtmSync']['settings'] = c360_clean_gtm_settings($s['gtmSync']['settings'] ?? []);
         c360_json(['site' => $s]);
+
+    case 'scan':
+        if (!$post) c360_json(['error' => 'method'], 405);
+        $host = c360_host($body['host'] ?? '');
+        if (!$host || !c360_load_site($host)) c360_json(['error' => 'notfound'], 404);
+        require_once __DIR__ . '/../scanner.php';
+        $scan = c360_run_scan($host);
+        if ($scan === null) c360_json(['error' => 'Már fut egy szkennelés ennél a domainnél.'], 409);
+        c360_json(['ok' => true, 'scan' => $scan]);
+
+    // A helyi GTM-szinkron eszköz (tools/gtm-sync.mjs) tölti fel: a GTM tagek állapota és a szinkron eredménye.
+    case 'gtm-snapshot':
+        if (!$post) c360_json(['error' => 'method'], 405);
+        $host = c360_host($body['host'] ?? '');
+        $s = $host ? c360_load_site($host) : null;
+        if (!$s) c360_json(['error' => 'notfound'], 404);
+        $snap = is_array($body['snapshot'] ?? null) ? $body['snapshot'] : [];
+        $json = json_encode($snap);
+        if (strlen((string)$json) > 400000) c360_json(['error' => 'túl nagy'], 413);
+        $s['gtmSync'] = $s['gtmSync'] ?? [];
+        $s['gtmSync']['snapshot'] = $snap;
+        c360_write(c360_site_file($host), $s);
+        c360_json(['ok' => true]);
 
     case 'create':
         if (!$post) c360_json(['error' => 'method'], 405);
@@ -60,10 +83,12 @@ switch ($a) {
         if (!$s) c360_json(['error' => 'notfound'], 404);
         if (in_array($body['status'] ?? '', ['active', 'discovered', 'disabled'], true)) $s['status'] = $body['status'];
         $s['config'] = c360_clean_config($body['config'] ?? []);
+        if (isset($body['scanSettings'])) $s['scanSettings'] = c360_clean_scan_settings($body['scanSettings']);
+        if (isset($body['gtmSettings'])) { $s['gtmSync'] = $s['gtmSync'] ?? []; $s['gtmSync']['settings'] = c360_clean_gtm_settings($body['gtmSettings']); }
         $s['updated'] = gmdate('c');
         $s['updatedBy'] = $user;
         c360_write(c360_site_file($host), $s);
-        c360_json(['ok' => true, 'config' => $s['config'], 'status' => $s['status']]);
+        c360_json(['ok' => true, 'config' => $s['config'], 'status' => $s['status'], 'scanSettings' => $s['scanSettings'] ?? null, 'gtmSettings' => $s['gtmSync']['settings'] ?? null]);
 
     case 'delete':
         if (!$post) c360_json(['error' => 'method'], 405);

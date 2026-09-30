@@ -3,7 +3,7 @@ Options -Indexes
   Header always set X-Content-Type-Options "nosniff"
 </IfModule>
 # A lib.php-t és az auth.php-t csak include-olni lehet.
-<FilesMatch "^(lib|auth)\.php$">
+<FilesMatch "^(lib|auth|scanner)\.php$">
   <IfModule mod_authz_core.c>
     Require all denied
   </IfModule>

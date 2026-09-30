@@ -33,7 +33,21 @@ A 360 Marketing saját, ingyenes GCMv2 süti bannere. Google Tag Managerből tö
 - **Nyelv és szöveg:** automatikus vagy rögzített nyelv, nyelvválasztó, felkínált nyelvek, szövegek felülírása nyelvenként.
 - **Kategóriák:** ki/be kapcsolás, leírás nyelvenként, mi tartozik bele.
 - **Szolgáltatások és sütik:** átsorolás másik kategóriába, elrejtés, leírás; az ismeretlen sütik besorolása. Az átsorolás a banner besorolását módosítja, a tényleges betöltést a GTM tag consent-feltétele szabja meg, ezért azt is igazítsd.
+- **Szkennelés:** ütemezett feltérképezés (gyakoriság, átnézett oldalak száma), a látogatói visszajelzés aránya, „Szkennelés most”, eredmény figyelmeztetésekkel.
+- **GTM:** a konténer tagjei és consent-feltételeik; az automatikus consent-szinkron be/ki, automatikus közzététel be/ki.
+- **Saját dizájn** (Megjelenés fül): CSS és JS. A JS-ben elérhető: `root`, `config`, `api`, `on('render' | 'decision', fn)`.
 - A beállítás mentés után legfeljebb 5 percen belül él (a böngészők ennyi ideig cache-elik).
+
+### GTM consent-szinkron
+
+```bash
+node tools/gtm-sync.mjs                                       # bekapcsolt domainek, csak jelentés
+node tools/gtm-sync.mjs --apply                               # a hiányzó feltételek beállítása
+node tools/gtm-sync.mjs --host domain.hu                      # egy domain, jelentés + pillanatkép az adminba
+node tools/gtm-sync.mjs --host domain.hu --test clarity=marketing --apply   # teszt, közzététel nélkül
+```
+
+Helyben fut a Google-fiók jogosultságával (a token nem kerül a szerverre). A GTM saját tagjeihez (GA4, Google tag, Ads) nem nyúl, ezek beépített consent-kezelést használnak. A módosítások a „360 Consent szinkron” munkaterületre kerülnek; a pengemedia tokennel verziót létrehozni nem lehet, ezért az automatikus közzététel ott a GTM felületén történik.
 
 Szerveroldal: `server/c360/` (PHP 7.4+, JSON-tárolás a `data/` mappában, amely kívülről tiltott). Frissítés: `node tools/build.mjs && tools/deploy-server.sh` (a `data/`-hoz nem nyúl).
 

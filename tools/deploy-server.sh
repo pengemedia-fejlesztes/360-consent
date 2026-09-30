@@ -8,7 +8,7 @@ F="$HOME/.config/360-marketing/tools/ftpc"
 L="$(cd "$(dirname "$0")/.." && pwd)/server/c360"
 T="$(mktemp -d)"; trap 'rm -rf "$T"' EXIT
 fail=0
-for f in .htaccess lib.php providers.json c360-consent.js api/config.php api/ping.php \
+for f in .htaccess lib.php scanner.php providers.json c360-consent.js api/config.php api/ping.php \
          admin/.htaccess admin/auth.php admin/index.php admin/api.php admin/app.js admin/app.css admin/defaults.json; do
   rm -f "$T"/p_*; split -b 8000 "$L/$f" "$T/p_"; first=1
   for p in "$T"/p_*; do

@@ -1,5 +1,12 @@
 # Változásnapló
 
+## 1.3.0 – 2026-09-30
+- **Szerveroldali feltérképezés:** a szerver maga szkenneli az oldalt (sitemap + GTM konténer), domainenként állítható gyakorisággal (naponta … havonta) és léptékkel (5–100 oldal); a látogatói visszajelzés aránya is állítható. „Szkennelés most” gomb az adminban. Az ütemezett szkennelés a konfiguráció-kérés után, a válasz lezárása után fut.
+- **GTM fül:** a konténer tagjei típussal, szolgáltatással, kategóriával és consent-feltétellel.
+- **Automatikus consent a GTM-ben** (`tools/gtm-sync.mjs`): a besorolás alapján beállítja a tagek consent-feltételét, a `gtm_consent_update` triggert és az oldalankénti egyszeri futást; egyetlen „360 Consent szinkron” munkaterületet használ.
+- **Saját dizájn:** CSS és JS domainenként; a JS a `render` és a `decision` eseményre is feliratkozhat.
+- Az „Összes elutasítása” a panelen is kikapcsolható.
+
 ## 1.2.0 – 2026-09-30
 - **Admin** (https://360-marketing.hu/c360/admin/): domainenkénti beállítások belépéssel, a telepítések nyilvántartása (mely domainen, mely oldalakon, milyen verzióval fut), a felismert szolgáltatások és ismeretlen sütik kezelése, élő előnézet.
 - Elhelyezés: középen, fent, lent, bal vagy jobb oldalt, állítható szélességgel.

@@ -32,6 +32,9 @@
     size: 0,                        // center/left/right: szélesség a képernyő %-ában (0 = alap)
     acceptLarge: true,              // nagy „Összes elfogadása”, kicsi „Testreszabás”
     showReject: true,               // „Összes elutasítása” már az első rétegben
+    showRejectPanel: true,          // „Összes elutasítása” a Testreszabás panelen
+    customCss: '',                  // saját CSS a banner stílusai után (az adminból)
+    customJs: '',                   // saját JS a banner felépítése után; elérhető: root, config, api, on(esemény, fn)
     position: 'left',               // a süti beállítás gomb (ikon) helye: 'left' | 'right'
     brandColor: '#287FAA',
     brandUrl: 'https://360-marketing.hu/',
@@ -391,7 +394,26 @@
       '#c360.c360--prefs .c360-dlg{padding:0}' +
       '#c360 .c360-title{font-size:19px}#c360 .c360-text{font-size:15px}' +
       '#c360 .c360-btns .c360-btn,#c360 .c360-btns--lg .c360-btn{flex:1 1 100%}' +
-      '#c360 .c360-row{grid-template-columns:90px 1fr}#c360 .c360-desc,#c360 .c360-list{margin-left:0}}';
+      '#c360 .c360-row{grid-template-columns:90px 1fr}#c360 .c360-desc,#c360 .c360-list{margin-left:0}}' +
+      (CONFIG.customCss ? '\n/* saját CSS */\n' + String(CONFIG.customCss) : '');
+  }
+
+  // Események a saját JS-nek és a weboldalnak: c360:render (detail.view), c360:decision (detail.state)
+  function emit(name, detail) {
+    try {
+      var ev;
+      if (typeof w.CustomEvent === 'function') ev = new w.CustomEvent(name, { detail: detail });
+      else { ev = d.createEvent('CustomEvent'); ev.initCustomEvent(name, false, false, detail); }
+      d.dispatchEvent(ev);
+    } catch (e) { /* nem kritikus */ }
+  }
+  function runCustomJs() {
+    if (!CONFIG.customJs) return;
+    try {
+      new Function('root', 'config', 'api', 'on', String(CONFIG.customJs))(root, CONFIG, w.C360Consent, function (name, fn) {
+        d.addEventListener('c360:' + name, function (e) { fn(e.detail, root); });
+      });
+    } catch (e) { if (w.console) console.warn('360 Consent – saját JS hiba:', e); }
   }
 
   var cookieSvg = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5zm-4.5 9a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm3 5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm5-1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zM9 6.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>';
@@ -463,7 +485,7 @@
         '<button type="button" class="c360-x" data-act="close" aria-label="' + esc(t('close')) + '">&times;</button></div></div>' +
       '<div class="c360-pbody"><p class="c360-intro">' + esc(t('text')) + policyLink() + '</p>' +
         CATS.filter(catEnabled).map(function (k) { return catHtml(k, svcs); }).join('') + '</div>' +
-      '<div class="c360-pfoot"><div class="c360-btns">' + btn('reject', t('rejectAll')) + btn('save', t('save')) + btn('accept', t('acceptAll'), true) + '</div></div>' +
+      '<div class="c360-pfoot"><div class="c360-btns">' + (CONFIG.showRejectPanel ? btn('reject', t('rejectAll')) : '') + btn('save', t('save')) + btn('accept', t('acceptAll'), true) + '</div></div>' +
     '</div>';
   }
 
@@ -475,6 +497,7 @@
     root.innerHTML = view === 'prefs' ? prefsHtml() : noticeHtml();
     var f = focusSel && $(focusSel);
     if (f) f.focus();
+    emit('c360:render', { view: view, lang: lang });
   }
 
   function collectDraft() {
@@ -517,6 +540,7 @@
     applyState(s);
     hasDecision = true;
     close();
+    emit('c360:decision', { state: s });
   }
 
   function onClick(e) {
@@ -616,6 +640,7 @@
     fab.innerHTML = cookieSvg;
     fab.addEventListener('click', function () { open(true); });
     d.body.appendChild(fab);
+    runCustomJs();
 
     // bármely elem a weboldalon megnyithatja: <a href="#" data-c360-open>Süti beállítások</a>
     d.addEventListener('click', function (e) {

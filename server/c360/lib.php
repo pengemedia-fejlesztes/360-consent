@@ -7,6 +7,8 @@ const C360_CATS = ['necessary', 'preferences', 'statistics', 'marketing'];
 const C360_LANGS = ['hu', 'en', 'de', 'es', 'fr', 'it', 'pt', 'ro', 'sk', 'bg', 'hr', 'cs', 'pl', 'ja'];
 const C360_PLACEMENTS = ['center', 'top', 'bottom', 'left', 'right'];
 const C360_MAX_SITES = 1000;
+// Kategória -> a GTM tag consent-feltétele (további jóváhagyás)
+const C360_CAT_CONSENT = ['necessary' => [], 'preferences' => ['personalization_storage'], 'statistics' => ['analytics_storage'], 'marketing' => ['ad_storage']];
 
 function c360_host($h): string
 {
@@ -113,7 +115,11 @@ function c360_clean_config($c): array
     $o = [];
     if (in_array($c['placement'] ?? '', C360_PLACEMENTS, true)) $o['placement'] = $c['placement'];
     if (isset($c['size']) && is_numeric($c['size'])) $o['size'] = max(0, min(100, (int)$c['size']));
-    foreach (['acceptLarge', 'showReject', 'langSwitcher', 'showBranding'] as $k) if (isset($c[$k])) $o[$k] = (bool)$c[$k];
+    foreach (['acceptLarge', 'showReject', 'showRejectPanel', 'langSwitcher', 'showBranding'] as $k) if (isset($c[$k])) $o[$k] = (bool)$c[$k];
+    if (isset($c['pingRate']) && is_numeric($c['pingRate'])) $o['pingRate'] = max(0, min(1, (float)$c['pingRate']));
+    // Saját dizájn: CSS a banner stílusai után, JS a banner felépítése után fut (csak adminból állítható).
+    if (isset($c['customCss']) && trim((string)$c['customCss']) !== '') $o['customCss'] = substr((string)$c['customCss'], 0, 20000);
+    if (isset($c['customJs']) && trim((string)$c['customJs']) !== '') $o['customJs'] = substr((string)$c['customJs'], 0, 20000);
     if (isset($c['position']) && in_array($c['position'], ['left', 'right'], true)) $o['position'] = $c['position'];
     if (isset($c['brandColor']) && preg_match('/^#[0-9a-fA-F]{6}$/', (string)$c['brandColor'])) $o['brandColor'] = $c['brandColor'];
     if (isset($c['policyUrl']) && preg_match('~^(https?://|/)[^\s"<>]*$~', (string)$c['policyUrl'])) $o['policyUrl'] = c360_str($c['policyUrl'], 300);
@@ -167,6 +173,24 @@ function c360_clean_config($c): array
     }
     $o['services'] = $svcs;
     return $o;
+}
+
+// Domain-szintű, nem a bannerbe kerülő beállítások
+function c360_clean_scan_settings($x): array
+{
+    $x = is_array($x) ? $x : [];
+    $every = (int)($x['everyDays'] ?? 7);
+    return [
+        'enabled' => !empty($x['enabled']),
+        'everyDays' => in_array($every, [1, 3, 7, 14, 30], true) ? $every : 7,
+        'maxPages' => max(5, min(100, (int)($x['maxPages'] ?? 20))),
+    ];
+}
+
+function c360_clean_gtm_settings($x): array
+{
+    $x = is_array($x) ? $x : [];
+    return ['enabled' => !empty($x['enabled']), 'autoPublish' => !empty($x['autoPublish'])];
 }
 
 function c360_cors(): void

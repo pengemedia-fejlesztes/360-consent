@@ -141,7 +141,7 @@
   function set(k, v) { cfg[k] = v; touch(); }
 
   function siteView() {
-    var tabs = { install: 'Telepítés', look: 'Megjelenés', lang: 'Nyelv és szöveg', cats: 'Kategóriák', svcs: 'Szolgáltatások és sütik' };
+    var tabs = { install: 'Telepítés', look: 'Megjelenés', lang: 'Nyelv és szöveg', cats: 'Kategóriák', svcs: 'Szolgáltatások és sütik', scan: 'Szkennelés', gtm: 'GTM' };
     var body = h('div', { class: 'tabbody' });
     var nav = h('div', { class: 'tabs', role: 'tablist' }, Object.keys(tabs).map(function (k) {
       return h('button', { role: 'tab', 'aria-selected': String(k === tab), class: k === tab ? 'on' : '', text: tabs[k], onclick: function () { tab = k; siteView(); } });
@@ -157,12 +157,14 @@
         h('button', { class: 'btn', text: 'Előnézet', onclick: preview }),
         h('button', { class: 'btn primary', text: 'Mentés', onclick: save }))
     ]);
-    ({ install: tabInstall, look: tabLook, lang: tabLang, cats: tabCats, svcs: tabSvcs })[tab](body);
+    ({ install: tabInstall, look: tabLook, lang: tabLang, cats: tabCats, svcs: tabSvcs, scan: tabScan, gtm: tabGtm })[tab](body);
   }
 
   function save() {
-    api('save', { host: site.host, status: site.status, config: cfg }).then(function (r) {
+    api('save', { host: site.host, status: site.status, config: cfg, scanSettings: site.scanSettings, gtmSettings: site.gtmSync.settings }).then(function (r) {
       site.config = r.config; site.status = r.status; site.updated = new Date().toISOString();
+      if (r.scanSettings) site.scanSettings = r.scanSettings;
+      if (r.gtmSettings) site.gtmSync.settings = r.gtmSettings;
       dirty = false; siteView();
       toast('Mentve. A látogatók legfeljebb 5 percen belül az új beállítást látják.');
     }, function (e) { toast('Mentés sikertelen: ' + e.message, true); });
@@ -218,7 +220,9 @@
       h('div', { class: 'card' }, h('h2', { text: 'Gombok' }),
         check('acceptLarge', true, 'Nagy „Összes elfogadása” gomb, kicsi „Testreszabás”'),
         check('showReject', true, '„Összes elutasítása” gomb már az első rétegben'),
+        check('showRejectPanel', true, '„Összes elutasítása” gomb a Testreszabás panelen'),
         val('showReject', true) ? null : h('p', { class: 'alert', text: 'Figyelem: a NAIH és az EDPB gyakorlata szerint az elutasításnak ugyanolyan könnyűnek kell lennie, mint az elfogadásnak. Elutasítás gomb nélkül a banner kifogásolható.' })),
+      designCard(),
       h('div', { class: 'card' }, h('h2', { text: 'Arculat és linkek' }),
         h('div', { class: 'form2' },
           h('label', null, 'Fő szín', h('input', { type: 'color', value: val('brandColor', '#287FAA'), oninput: function () { set('brandColor', this.value); } })),
@@ -231,6 +235,80 @@
   }
   function check(k, def, label) {
     return h('label', { class: 'check' }, h('input', { type: 'checkbox', checked: val(k, def), onchange: function () { set(k, this.checked); if (k === 'showReject') siteView(); } }), ' ' + label);
+  }
+
+  // Saját CSS és JS a banner dizájnjához
+  function designCard() {
+    var cssHelp = '#c360 .c360-dlg { border-radius: 4px; }\n#c360 .c360-title { font-family: Georgia, serif; }\n#c360 .c360-btn--primary { background: #e30613; border-color: #e30613; }';
+    var jsHelp = "// Elérhető: root (a banner elem), config, api (C360Consent), on(esemény, fn)\non('render', function (e, root) {\n  if (e.view === 'notice') root.querySelector('.c360-title').insertAdjacentHTML('afterbegin', '🍪 ');\n});\non('decision', function (e) { console.log('döntés', e.state); });";
+    return h('div', { class: 'card' }, h('h2', { text: 'Saját dizájn (CSS és JS)' }),
+      h('p', { class: 'muted', text: 'A CSS a banner saját stílusai után töltődik be, így felülírhatja őket (a banner elemei: #c360, .c360-dlg, .c360-title, .c360-text, .c360-btn, .c360-btn--primary, .c360-cat, #c360-fab). A JS a banner felépítése után fut; az on(\'render\') minden megjelenítéskor, az on(\'decision\') döntéskor hívódik.' }),
+      h('label', { class: 'block' }, 'CSS', h('textarea', { class: 'mono', rows: '8', spellcheck: 'false', value: val('customCss', ''), placeholder: cssHelp, oninput: function () { set('customCss', this.value); } })),
+      h('label', { class: 'block' }, 'JavaScript', h('textarea', { class: 'mono', rows: '8', spellcheck: 'false', value: val('customJs', ''), placeholder: jsHelp, oninput: function () { set('customJs', this.value); } })),
+      h('p', { class: 'alert', text: 'A JS minden látogató böngészőjében lefut ezen a domainen. Csak megbízható kódot írj ide, és mentés előtt nézd meg az Előnézetben.' }));
+  }
+
+  // Szkennelés: gyakoriság, lépték, eredmény
+  function tabScan(body) {
+    var st = site.scanSettings, sc = site.scan;
+    var pr = Math.round((cfg.pingRate === undefined ? 0.02 : cfg.pingRate) * 1000) / 10;
+    var runBtn = h('button', { class: 'btn primary', text: 'Szkennelés most', onclick: function () {
+      runBtn.disabled = true; runBtn.textContent = 'Szkennelés folyamatban… (akár 1–2 perc)';
+      api('scan', { host: site.host }).then(function (r) { site.scan = r.scan; toast('Szkennelés kész.'); siteView(); },
+        function (e) { toast('Szkennelés sikertelen: ' + e.message, true); runBtn.disabled = false; runBtn.textContent = 'Szkennelés most'; });
+    } });
+    add(body, [
+      h('div', { class: 'card' }, h('h2', { text: 'Ütemezett feltérképezés' }),
+        h('p', { class: 'muted', text: 'A szerver végigmegy az oldal sitemapjában szereplő oldalakon és a GTM konténeren, és feltérképezi, milyen JS és süti fut. Az eredmény a bannerben és a többi fülön is megjelenik.' }),
+        h('label', { class: 'check' }, h('input', { type: 'checkbox', checked: st.enabled, onchange: function () { st.enabled = this.checked; touch(); } }), ' Ütemezett szkennelés bekapcsolva'),
+        h('div', { class: 'form2' },
+          h('label', null, 'Gyakoriság', h('select', { onchange: function () { st.everyDays = +this.value; touch(); } },
+            [[1, 'Naponta'], [3, '3 naponta'], [7, 'Hetente'], [14, 'Kéthetente'], [30, 'Havonta']].map(function (o) { return h('option', { value: String(o[0]), text: o[1], selected: st.everyDays === o[0] ? 'selected' : null }); }))),
+          h('label', null, 'Lépték: átnézett oldalak száma (5–100)', h('input', { type: 'number', min: '5', max: '100', value: String(st.maxPages), oninput: function () { st.maxPages = Math.max(5, Math.min(100, +this.value || 20)); touch(); } })),
+          h('label', null, 'Látogatói visszajelzés: a látogatások hány %-a jelezzen (0–100)', h('input', { type: 'number', min: '0', max: '100', step: '0.5', value: String(pr), oninput: function () { set('pingRate', Math.max(0, Math.min(100, +this.value || 0)) / 100); } }))),
+        h('p', { class: 'muted small', text: 'A látogatói visszajelzés süti-neveket és felismert szolgáltatásokat küld (értéket és IP-címet nem). Alacsony forgalmú oldalon, ha 12 órája nem jött jelzés, átmenetileg 25%-ra emelkedik.' }),
+        h('div', { class: 'row' }, runBtn, h('span', { class: 'muted', text: sc ? 'Utolsó: ' + fmtDate(sc.scannedAt) + (st.enabled ? ' · következő: kb. ' + fmtDate(new Date(Date.parse(sc.scannedAt) + st.everyDays * 864e5).toISOString()) : '') : 'Még nem volt szkennelés.' }))),
+      sc ? h('div', { class: 'card' }, h('h2', { text: 'Eredmény' }),
+        h('div', { class: 'stats' }, stat('Átnézett oldalak', sc.pages), stat('GTM konténer', (sc.gtm || []).join(', ') || 'nincs'), stat('Szolgáltatások', Object.keys(sc.services || {}).length), stat('Ismeretlen domainek', (sc.unknownHosts || []).length)),
+        (sc.warnings || []).length ? h('ul', { class: 'warn' }, sc.warnings.map(function (w) { return h('li', { text: w }); })) : h('p', { text: '✓ Figyelmeztetés nincs.' }),
+        h('table', { class: 'grid' }, h('thead', null, h('tr', null, ['Szolgáltatás', 'Kategória', 'Honnan töltődik'].map(function (x) { return h('th', { text: x }); }))),
+          h('tbody', null, Object.keys(sc.services || {}).map(function (id) {
+            var p = providers[id] || { name: id, cat: '' }, v = sc.services[id];
+            return h('tr', null, h('td', { text: p.name }), h('td', { text: CATS[p.cat] || p.cat }), h('td', { text: (v.via || []).map(function (x) { return x === 'html' ? 'oldal kódja (' + v.pages + ' oldal)' : 'GTM'; }).join(' + ') }));
+          }))),
+        (sc.unknownHosts || []).length ? h('p', { class: 'muted', text: 'Ismeretlen külső domainek: ' + sc.unknownHosts.join(', ') }) : null) : null
+    ]);
+  }
+
+  // GTM: tagek és consent-feltételek, automatikus szinkron
+  var CONSENT_REQ = { necessary: [], preferences: ['personalization_storage'], statistics: ['analytics_storage'], marketing: ['ad_storage'] };
+  function tabGtm(body) {
+    var g = site.gtmSync || {}, st = g.settings || {}, snap = g.snapshot;
+    var cats = allServices();
+    add(body, h('div', { class: 'card' }, h('h2', { text: 'Automatikus consent a GTM-ben' }),
+      h('p', { class: 'muted', text: 'Bekapcsolva a szinkron a GTM tageket a szolgáltatások besorolása szerint állítja be: a tag consent-feltételt kap (Statisztika → analytics_storage, Marketing → ad_storage, Személyre szabás → personalization_storage), a gtm_consent_update triggert, és oldalanként egyszer fut. A Google saját tagjei beépített consent-kezelést használnak, ezekhez nem nyúl.' }),
+      h('label', { class: 'check' }, h('input', { type: 'checkbox', checked: st.enabled, onchange: function () { site.gtmSync.settings.enabled = this.checked; touch(); } }), ' Consent-feltételek automatikus beállítása a GTM-ben'),
+      h('label', { class: 'check' }, h('input', { type: 'checkbox', checked: st.autoPublish, onchange: function () { site.gtmSync.settings.autoPublish = this.checked; touch(); } }), ' A módosításokat automatikusan közzé is teszi (különben a GTM munkaterületen publikálásra várnak)'),
+      h('p', { class: 'muted small', text: 'A szinkront a 360 gépén futó eszköz végzi a Google-fiók jogosultságával (tools/gtm-sync.mjs). Az eredménye alább jelenik meg.' })));
+    var sc = site.scan || {};
+    if (snap) {
+      add(body, h('div', { class: 'card flush' }, h('div', { class: 'pad' }, h('h2', { text: 'GTM tagek – ' + snap.container + ' (élő: v' + snap.liveVersion + ')' }),
+        h('p', { class: 'muted', text: 'Utolsó szinkron: ' + fmtDate(snap.syncedAt) + (snap.pending ? ' · ⚠ módosítások publikálásra várnak a GTM-ben' : '') + (snap.changes ? ' · ' + snap.changes + ' módosítás' : '') })),
+        h('table', { class: 'grid' }, h('thead', null, h('tr', null, ['Tag', 'Típus', 'Szolgáltatás', 'Kategória', 'Consent-feltétel', 'Állapot'].map(function (x) { return h('th', { text: x }); }))),
+          h('tbody', null, snap.tags.map(function (t) {
+            var cat = t.service && cats[t.service] ? cats[t.service].cat : t.cat;
+            return h('tr', { class: t.paused ? 'faded' : '' }, h('td', null, h('strong', { text: t.name }), h('div', { class: 'muted small', text: '#' + t.id })),
+              h('td', { class: 'small', text: t.type }), h('td', { text: t.service ? (providers[t.service] || {}).name || t.service : '–' }),
+              h('td', { text: cat ? CATS[cat] : '–' }), h('td', { class: 'small', text: t.consent && t.consent.length ? t.consent.join(', ') : (t.builtin ? 'beépített (Google)' : 'nincs') }),
+              h('td', null, h('span', { class: 'badge ' + (t.status === 'ok' ? 'ok' : t.status === 'fixed' ? 'warn' : t.status === 'missing' ? 'bad' : 'off'), text: { ok: 'Rendben', fixed: 'Javítva', missing: 'Hiányzik', skip: 'Nem kell', paused: 'Szünetel' }[t.status] || t.status })));
+          })))));
+    } else if (sc.gtmTags) {
+      add(body, h('div', { class: 'card' }, h('h2', { text: 'GTM tagek a nyilvános konténerből' }),
+        h('p', { class: 'muted', text: 'Még nem futott szinkron; ezek a szkennelésből származnak (tag-nevek nélkül).' }),
+        h('table', { class: 'grid' }, h('tbody', null, sc.gtmTags.map(function (t) {
+          return h('tr', null, h('td', { text: '#' + t.id + ' ' + t.type }), h('td', { text: t.service ? (providers[t.service] || {}).name : '–' }), h('td', { class: 'small', text: (t.consent || []).join(', ') || (t.google ? 'beépített (Google)' : '–') }));
+        })))));
+    } else add(body, h('div', { class: 'card empty', text: 'Még nincs GTM-adat. Futtass szkennelést vagy szinkront.' }));
   }
 
   // 3. Nyelv és szöveg
@@ -278,7 +356,8 @@
   function allServices() {
     var out = {}, det = site.detected && site.detected.services || {}, id;
     for (id in det) if (providers[id]) out[id] = { id: id, p: providers[id], det: det[id] };
-    (site.scan && site.scan.services || []).forEach(function (s) { if (providers[s.id] && !out[s.id]) out[s.id] = { id: s.id, p: providers[s.id], scan: true }; });
+    var ss = site.scan && site.scan.services || {};
+    (Array.isArray(ss) ? ss.map(function (x) { return x.id; }) : Object.keys(ss)).forEach(function (sid) { if (providers[sid] && !out[sid]) out[sid] = { id: sid, p: providers[sid], scan: true }; });
     cfg.services.forEach(function (a) { out[a.id] = out[a.id] || { id: a.id, p: providers[a.id] || null }; out[a.id].o = a; });
     Object.keys(out).forEach(function (k) {
       var s = out[k];

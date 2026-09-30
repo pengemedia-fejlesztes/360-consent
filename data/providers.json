@@ -4,11 +4,13 @@
     "name": "360 Consent",
     "cat": "necessary",
     "hosts": [
-      "cdn.jsdelivr.net/gh/pengemedia-fejlesztes/360-consent"
+      "cdn.jsdelivr.net/gh/pengemedia-fejlesztes/360-consent",
+      "360-marketing.hu/c360/"
     ],
     "gtm": [
       "360-consent@",
-      "c360_consent"
+      "c360_consent",
+      "c360/api/loader.php"
     ],
     "cookies": [
       [

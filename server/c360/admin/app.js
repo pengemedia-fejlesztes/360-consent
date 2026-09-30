@@ -174,7 +174,7 @@
   function tabInstall(body) {
     var ins = site.install || {}, pages = ins.pages || {};
     var list = Object.keys(pages).sort(function (a, b) { return pages[b] < pages[a] ? -1 : 1; });
-    var loader = "<script>\nwindow.C360_CONFIG = { policyUrl: {{DataPolicyURL}} };\n(function (d) {\n  if (d.getElementById('c360-loader')) return;\n  var s = d.createElement('script');\n  s.id = 'c360-loader'; s.async = true;\n  s.src = 'https://cdn.jsdelivr.net/gh/pengemedia-fejlesztes/360-consent@1/dist/c360-consent.min.js';\n  d.head.appendChild(s);\n})(document);\n</script>";
+    var loader = "<script>\n/* 360 Marketing \u2013 Consent popup bet\u00f6lt\u0151 (GTM Custom HTML, trigger: Initialization \u2013 All Pages)\n * A 360 Consent admin be\u00e1ll\u00edt\u00e1sait \u00e9s a popup aktu\u00e1lis verzi\u00f3j\u00e1t a 360 szervere adja (mindig friss);\n * ha az nem \u00e9rhet\u0151 el, a jsDelivr @1 a tartal\u00e9k. https://github.com/pengemedia-fejlesztes/360-consent */\nwindow.C360_CONFIG = {\n  policyUrl: {{DataPolicyURL}}\n};\n(function (d, h) {\n  if (d.getElementById('c360-loader')) return;\n  var s = d.createElement('script');\n  s.id = 'c360-loader';\n  s.async = true;\n  s.src = 'https://360-marketing.hu/c360/api/loader.php?host=' + encodeURIComponent(h);\n  s.onerror = function () {\n    var f = d.createElement('script');\n    f.async = true;\n    f.src = 'https://cdn.jsdelivr.net/gh/pengemedia-fejlesztes/360-consent@1/dist/c360-consent.min.js';\n    d.head.appendChild(f);\n  };\n  d.head.appendChild(s);\n})(document, location.hostname);\n</script>";
     add(body, [
       h('div', { class: 'stats' },
         stat('Első jelzés', fmtDate(ins.firstSeen)), stat('Utolsó jelzés', ago(ins.lastSeen)),

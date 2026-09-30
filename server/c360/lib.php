@@ -193,6 +193,26 @@ function c360_clean_gtm_settings($x): array
     return ['enabled' => !empty($x['enabled']), 'autoPublish' => !empty($x['autoPublish'])];
 }
 
+// A popupnak kiadott beállítás (config.php és loader.php közös)
+function c360_public_config(?array $site): array
+{
+    $cfg = [];
+    if ($site && ($site['status'] ?? '') === 'active') $cfg = is_array($site['config'] ?? null) ? $site['config'] : [];
+    foreach (['texts', 'categories'] as $k) if (isset($cfg[$k]) && !$cfg[$k]) $cfg[$k] = (object)[];
+    // Az ismert szolgáltatások (szkennelés + látogatói visszajelzés): ebből tudja a popup, melyik kategória üres.
+    if ($site) {
+        $known = array_merge(array_keys((array)($site['scan']['services'] ?? [])), array_keys((array)($site['detected']['services'] ?? [])));
+        $cfg['known'] = array_values(array_unique($known));
+    }
+    unset($cfg['urlPassthrough'], $cfg['adsRedaction']); // ezeket a GTM Init tag kapja (gtm-sync), nem a popup
+    // Ha régóta nem jött jelzés, több látogató jelezzen vissza, hogy a nyilvántartás gyorsan frissüljön.
+    $last = $site['install']['lastSeen'] ?? null;
+    $base = isset($cfg['pingRate']) ? (float)$cfg['pingRate'] : 0.02; // az adminban állított mintavétel
+    $cfg['pingRate'] = ($last && strtotime($last) > time() - 12 * 3600) ? $base : max($base, 0.25);
+    if ($site && ($site['status'] ?? '') === 'disabled') $cfg['pingRate'] = 0;
+    return $cfg;
+}
+
 function c360_cors(): void
 {
     header('Access-Control-Allow-Origin: *');

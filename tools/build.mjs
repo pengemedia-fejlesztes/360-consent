@@ -39,6 +39,7 @@ for (const [l, t] of Object.entries(I18N)) {
     'desc_necessary', 'desc_preferences', 'desc_statistics', 'desc_marketing'].map((k) => [k, t[k] || '']));
 }
 writeFileSync(new URL('server/c360/c360-consent.js', root), out);
+writeFileSync(new URL('server/c360/version.json', root), JSON.stringify({ version: pkg.version })); // a loader.php ezt a verziót tölti
 writeFileSync(new URL('server/c360/providers.json', root), JSON.stringify(providers));
 writeFileSync(new URL('server/c360/admin/defaults.json', root), JSON.stringify(defaults));
 console.log(`dist/c360-consent.js – ${pkg.version}, ${providers.length} szolgáltatás, ${out.length} bájt`);

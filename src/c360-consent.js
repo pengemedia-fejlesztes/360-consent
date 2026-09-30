@@ -334,6 +334,14 @@
   var C = CONFIG.brandColor;
   var root, fab, lastFocus, hasDecision = false, view = 'notice', draft = null, openCats = {}, lastReport = null;
 
+  function rgba(hex, a) {
+    var m = /^#?([0-9a-f]{6})$/i.exec(hex || '');
+    var n = m ? parseInt(m[1], 16) : 0x287faa;
+    return 'rgba(' + (n >> 16) + ',' + (n >> 8 & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+  // Nagy, középre igazított elrendezés: középen, a képernyő legalább felén.
+  function isHero() { return CONFIG.placement === 'center' && +CONFIG.size >= 50; }
+
   function buildCss() {
     C = CONFIG.brandColor;
     var side = CONFIG.position === 'right' ? 'right' : 'left';
@@ -418,7 +426,26 @@
       '#c360 .c360-title{font-size:19px}#c360 .c360-text{font-size:15px}' +
       '#c360 .c360-btns .c360-btn,#c360 .c360-btns--lg .c360-btn{flex:1 1 100%}' +
       '#c360 .c360-row{grid-template-columns:90px 1fr}#c360 .c360-desc,#c360 .c360-list{margin-left:0}}' +
-      sized + (CONFIG.customCss ? '\n/* saját CSS */\n' + String(CONFIG.customCss) : '');
+      sized +
+      // --- nagy elrendezés ---
+      '#c360 .c360-dlg--hero{position:relative;padding:56px 40px 48px;background:#fff radial-gradient(120% 55% at 50% 0%,' + rgba(C, 0.11) + ',rgba(255,255,255,0) 65%)}' +
+      '#c360 .c360-top{position:absolute;top:18px;right:22px;left:22px;display:flex;justify-content:flex-end}' +
+      '#c360 .c360-hero{width:100%;max-width:760px;margin:auto;display:flex;flex-direction:column;align-items:center;text-align:center}' +
+      '#c360 .c360-icon{width:88px;height:88px;border-radius:50%;background:' + rgba(C, 0.12) + ';color:' + C + ';display:flex;align-items:center;justify-content:center;margin-bottom:28px;box-shadow:0 0 0 10px ' + rgba(C, 0.05) + '}' +
+      '#c360 .c360-icon svg{width:46px;height:46px}' +
+      '#c360 .c360-hero .c360-title{font-size:clamp(26px,2.7vw,42px);line-height:1.18;letter-spacing:-.015em;margin-bottom:18px}' +
+      '#c360 .c360-hero .c360-text{font-size:clamp(16px,1.15vw,19px);line-height:1.65;color:#4a5763;max-width:680px}' +
+      '#c360 .c360-policy{margin-top:14px;font-size:15px}' +
+      '#c360 .c360-policy a{color:' + C + ';font-weight:600;text-decoration:underline;text-underline-offset:3px}' +
+      '#c360 .c360-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:26px}' +
+      '#c360 .c360-chip{display:inline-flex;align-items:center;gap:7px;padding:6px 14px;border-radius:999px;background:#f1f4f6;color:#33414c;font-size:13px;font-weight:600}' +
+      '#c360 .c360-chip i{width:8px;height:8px;border-radius:50%;background:' + C + '}' +
+      '#c360 .c360-chip--necessary i{background:#138a36}' +
+      '#c360 .c360-btns--hero{width:100%;max-width:580px;margin:34px auto 0;justify-content:center}' +
+      '#c360 .c360-btns--hero .c360-btn{flex:0 1 auto;border-radius:10px}' +
+      '#c360 .c360-btns--hero .c360-btn--primary{flex:1 1 55%;min-height:58px;font-size:18px;box-shadow:0 8px 20px ' + rgba(C, 0.28) + '}' +
+      '@media (max-width:640px){#c360 .c360-dlg--hero{padding:64px 20px 28px}#c360 .c360-icon{width:64px;height:64px;margin-bottom:18px}#c360 .c360-icon svg{width:34px;height:34px}#c360 .c360-btns--hero .c360-btn{flex:1 1 100%}#c360 .c360-btns--hero .c360-btn--primary{order:-1}}' +
+      (CONFIG.customCss ? '\n/* saját CSS */\n' + String(CONFIG.customCss) : '');
   }
 
   // Események a saját JS-nek és a weboldalnak: c360:render (detail.view), c360:decision (detail.state)
@@ -467,7 +494,25 @@
     return '<button type="button" class="c360-btn' + (primary ? ' c360-btn--primary' : '') + '" data-act="' + act + '">' + esc(label) + '</button>';
   }
 
+  function heroHtml() {
+    var svcs = serviceList(lastReport || newReport());
+    var chips = CATS.filter(function (k) { return catVisible(k, svcs); }).map(function (k) {
+      return '<span class="c360-chip c360-chip--' + k + '"><i></i>' + esc(t(k)) + '</span>';
+    }).join('');
+    return '<div class="c360-dlg c360-dlg--hero" role="dialog" aria-modal="true" aria-labelledby="c360-title" aria-describedby="c360-text" lang="' + lang + '">' +
+      '<div class="c360-top">' + toolsHtml() + '</div>' +
+      '<div class="c360-hero">' +
+        '<div class="c360-icon" aria-hidden="true">' + cookieSvg + '</div>' +
+        '<h2 class="c360-title" id="c360-title">' + esc(t('title')) + '</h2>' +
+        '<p class="c360-text" id="c360-text">' + esc(t('text')) + '</p>' +
+        (CONFIG.policyUrl ? '<p class="c360-policy"><a href="' + esc(CONFIG.policyUrl) + '" target="_blank" rel="noopener">' + esc(t('policy')) + '</a></p>' : '') +
+        (chips ? '<div class="c360-chips">' + chips + '</div>' : '') +
+        '<div class="c360-btns c360-btns--hero">' + btn('customize', t('customize')) + (CONFIG.showReject ? btn('reject', t('rejectAll')) : '') + btn('accept', t('acceptAll'), true) + '</div>' +
+      '</div></div>';
+  }
+
   function noticeHtml() {
+    if (isHero()) return heroHtml();
     var bar = CONFIG.placement === 'top' || CONFIG.placement === 'bottom';
     var btns = '<div class="c360-btns' + (CONFIG.acceptLarge ? ' c360-btns--lg' : '') + '">' +
       btn('customize', t('customize')) + (CONFIG.showReject ? btn('reject', t('rejectAll')) : '') + btn('accept', t('acceptAll'), true) + '</div>';
@@ -633,6 +678,8 @@
 
   // --- Admin-beállítások betöltése (legfeljebb 2,5 mp; utána alapértékekkel indul) ---
   function loadRemote(cb) {
+    // Az új betöltő (360-marketing.hu/c360/api/loader.php) már beírta a beállításokat – nincs külön kérés.
+    if (w.C360_REMOTE && w.C360_REMOTE.config) { merge(w.C360_REMOTE.config); cb(); return; }
     if (!CONFIG.api || !w.fetch) { cb(); return; }
     var done = false;
     var finish = function () { if (!done) { done = true; cb(); } };

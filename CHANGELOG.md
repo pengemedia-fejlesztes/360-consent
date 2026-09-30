@@ -1,5 +1,10 @@
 # Változásnapló
 
+## 1.4.1 – 2026-09-30
+- Új betöltő: `https://360-marketing.hu/c360/api/loader.php?host=…` – egy kérésben adja a domain beállításait és a popup pontos verzióját. A jsDelivr `@1` alias a böngészőkben 7 napig cache-elődött, ezért egy új kiadás napokig nem látszott; a pontos verziós cím örökre cache-elhető, a betöltő pedig mindig friss.
+- Nagy elrendezés (középen, a képernyő legalább 50%-án): középre igazított tartalom nagy ikonnal, olvasható sorhosszal, kategória-címkékkel, a nyelvválasztó és a jelölés a jobb felső sarokban; mobilon a fő gomb felül.
+- A GTM loader tag új kódja (`gtm/loader-tag.html`): tartalékként a jsDelivr `@1`-et tölti, ha a 360 szerver nem érhető el.
+
 ## 1.4.0 – 2026-09-30
 - A méret a teljes látható képernyő %-a: középen szélességre és magasságra is (négyzetes képernyőn négyzetes), fent/lent a sáv magassága.
 - A beállítás azonnal él: a konfiguráció ETag-gel, cache nélkül megy (304, ha nem változott).

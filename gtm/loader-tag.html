@@ -1,17 +1,22 @@
 <script>
 /* 360 Marketing – Consent popup betöltő (GTM Custom HTML, trigger: Initialization – All Pages)
- * Oldalankénti beállítás itt; a kód a GitHubról jön: https://github.com/pengemedia-fejlesztes/360-consent
- * @1 = mindig a legfrissebb 1.x kiadás. */
+ * A 360 Consent admin beállításait és a popup aktuális verzióját a 360 szervere adja (mindig friss);
+ * ha az nem érhető el, a jsDelivr @1 a tartalék. https://github.com/pengemedia-fejlesztes/360-consent */
 window.C360_CONFIG = {
-  policyUrl: {{DataPolicyURL}},
-  brandColor: '#287FAA'
+  policyUrl: {{DataPolicyURL}}
 };
-(function (d) {
+(function (d, h) {
   if (d.getElementById('c360-loader')) return;
   var s = d.createElement('script');
   s.id = 'c360-loader';
   s.async = true;
-  s.src = 'https://cdn.jsdelivr.net/gh/pengemedia-fejlesztes/360-consent@1/dist/c360-consent.min.js';
+  s.src = 'https://360-marketing.hu/c360/api/loader.php?host=' + encodeURIComponent(h);
+  s.onerror = function () {
+    var f = d.createElement('script');
+    f.async = true;
+    f.src = 'https://cdn.jsdelivr.net/gh/pengemedia-fejlesztes/360-consent@1/dist/c360-consent.min.js';
+    d.head.appendChild(f);
+  };
   d.head.appendChild(s);
-})(document);
+})(document, location.hostname);
 </script>

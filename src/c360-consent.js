@@ -603,7 +603,8 @@
 
   function open(prefs) {
     var s = readState(), pre = !s && !!CONFIG.preChecked;
-    draft = { preferences: pre || !!(s && s.preferences), statistics: pre || !!(s && s.statistics), marketing: pre || !!(s && s.marketing) };
+    function preCat(k) { return pre || (!s && !!(CONFIG.categories[k] && CONFIG.categories[k].preChecked)); }
+    draft = { preferences: preCat('preferences') || !!(s && s.preferences), statistics: preCat('statistics') || !!(s && s.statistics), marketing: preCat('marketing') || !!(s && s.marketing) };
     view = prefs ? 'prefs' : 'notice';
     lastFocus = d.activeElement;
     root.hidden = false;

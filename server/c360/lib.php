@@ -66,7 +66,8 @@ function c360_new_site(string $host, string $status): array
         'status' => $status, // active | discovered | disabled
         'created' => $now,
         'updated' => $now,
-        'config' => (object)[],
+        // Uj oldalnal a statisztika es a marketing alapbol bekapcsolt kapcsoloval indul (Laci, 2026-10-12).
+        'config' => ['categories' => ['statistics' => ['preChecked' => true], 'marketing' => ['preChecked' => true]]],
         'install' => ['firstSeen' => null, 'lastSeen' => null, 'pings' => 0, 'versions' => (object)[], 'langs' => (object)[], 'pages' => (object)[], 'placement' => null],
         'detected' => ['services' => (object)[], 'cookies' => (object)[], 'hosts' => (object)[]],
     ];
@@ -142,6 +143,7 @@ function c360_clean_config($c): array
         if (!is_array($x)) continue;
         $e = [];
         if ($k !== 'necessary' && isset($x['enabled'])) $e['enabled'] = (bool)$x['enabled'];
+        if ($k !== 'necessary' && isset($x['preChecked'])) $e['preChecked'] = (bool)$x['preChecked'];
         $desc = c360_loc($x['desc'] ?? null, 600);
         if ($desc) $e['desc'] = $desc;
         if ($e) $cats[$k] = $e;

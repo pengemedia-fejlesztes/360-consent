@@ -416,6 +416,10 @@
               cfg.categories[k] = cfg.categories[k] || {};
               cfg.categories[k].enabled = this.checked; touch(); siteView();
             } }), ' Megjelenik a bannerben')),
+        k === 'necessary' ? null : h('label', { class: 'check' }, h('input', { type: 'checkbox', checked: !!c.preChecked, onchange: function () {
+          cfg.categories[k] = cfg.categories[k] || {};
+          cfg.categories[k].preChecked = this.checked; touch(); siteView();
+        } }), ' Alapból bekapcsolva (a látogató első megnyitásakor)'),
         en ? null : h('p', { class: 'muted', text: 'Kikapcsolva: a kategória nem jelenik meg, és mindig elutasítottnak számít.' }),
         h('label', { class: 'block' }, 'Leírás (' + LANG_NAMES[editLang] + ')', h('textarea', { rows: '3', value: (c.desc || {})[editLang] || '', placeholder: (defaults[editLang] || {})['desc_' + k] || '', oninput: function () {
           cfg.categories[k] = cfg.categories[k] || {};

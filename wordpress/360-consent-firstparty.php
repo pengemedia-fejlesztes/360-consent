@@ -5,7 +5,9 @@
  *              popup JS-ét is az oldal SAJÁT doménjéről szolgálja ki (a szerver a git/jsDelivr-ből húzza
  *              és cache-eli), így a böngészőnek NINCS kereszt-domain kérése, és Safari privát mód /
  *              fejlett követésvédelem esetén is megjelenik. A git-frissítések automatikusan átjönnek.
- * Version: 3.0.0
+ *              Az asset-URL tartalom-hash alapú verziójelet kap (&v=), így új kiadáskor a böngésző-cache
+ *              automatikusan megújul. A GTM megkerülve.
+ * Version: 3.1.0
  * Author: Penge Média / 360 Marketing
  *
  * Telepítés: wp-content/mu-plugins/360-consent-firstparty.php (mu-plugin = mindig aktív).
@@ -23,38 +25,58 @@ if (!defined('C360_CHANNEL')) {
     define('C360_CHANNEL', '1');
 }
 
+function c360_fp_channel()
+{
+    return preg_replace('/[^a-zA-Z0-9._-]/', '', (string) C360_CHANNEL) ?: '1';
+}
+
 /**
- * Same-origin asset-végpont: az oldal saját doménjén szolgálja ki a popup JS-ét,
- * amit a szerver a jsDelivr-ből (git) húz le és 1 órára cache-el. Így a böngésző csak
- * az oldal saját doménjét hívja, a frissítés mégis a gitből automatikus.
- * URL:  /?c360_asset=js
+ * A popup JS-ét a jsDelivr-ből (git) húzza le és 15 percre cache-eli, a tartalom-hash-sel együtt.
+ * Visszatérés: [ js vagy '', 8 karakteres tartalom-hash vagy '' ].
+ */
+function c360_fp_get_js($fresh = false)
+{
+    $channel = c360_fp_channel();
+    $jsKey = 'c360_js_' . md5($channel);
+    $verKey = 'c360_jsver_' . md5($channel);
+    $js = $fresh ? false : get_transient($jsKey);
+    if ($js === false) {
+        $resp = wp_remote_get('https://cdn.jsdelivr.net/gh/pengemedia-fejlesztes/360-consent@' . $channel . '/dist/c360-consent.min.js', ['timeout' => 8]);
+        if (!is_wp_error($resp) && (int) wp_remote_retrieve_response_code($resp) === 200) {
+            $body = (string) wp_remote_retrieve_body($resp);
+            if (strlen($body) > 1000) {
+                $js = $body;
+                set_transient($jsKey, $js, 15 * MINUTE_IN_SECONDS);
+                set_transient($verKey, substr(md5($js), 0, 8), DAY_IN_SECONDS);
+            }
+        }
+    }
+    $ver = get_transient($verKey);
+    if (!$ver && is_string($js) && $js !== '') {
+        $ver = substr(md5($js), 0, 8);
+        set_transient($verKey, $ver, DAY_IN_SECONDS);
+    }
+    return [is_string($js) ? $js : '', is_string($ver) ? $ver : ''];
+}
+
+/**
+ * Same-origin asset-végpont: /?c360_asset=js[&v=hash]  – az oldal saját doménjén szolgálja ki a popup JS-ét.
  */
 add_action('init', function () {
     if (!isset($_GET['c360_asset']) || $_GET['c360_asset'] !== 'js') {
         return;
     }
-    $channel = preg_replace('/[^a-zA-Z0-9._-]/', '', (string) C360_CHANNEL) ?: '1';
-    $cacheKey = 'c360_js_' . md5($channel);
-    // Azonnali frissítés kézből: ?c360_asset=js&fresh=<csatorna> – a gyorsítótárat megkerüli.
-    $fresh = isset($_GET['fresh']) && (string) $_GET['fresh'] === $channel;
-    $js = $fresh ? false : get_transient($cacheKey);
-    if ($js === false) {
-        $resp = wp_remote_get('https://cdn.jsdelivr.net/gh/pengemedia-fejlesztes/360-consent@' . $channel . '/dist/c360-consent.min.js', ['timeout' => 8]);
-        if (!is_wp_error($resp) && (int) wp_remote_retrieve_response_code($resp) === 200) {
-            $js = (string) wp_remote_retrieve_body($resp);
-            if (strlen($js) > 1000) {
-                set_transient($cacheKey, $js, 15 * MINUTE_IN_SECONDS);
-            }
-        }
-    }
-    if (!is_string($js) || $js === '') {
+    $fresh = isset($_GET['fresh']) && (string) $_GET['fresh'] === c360_fp_channel();
+    list($js, $ver) = c360_fp_get_js($fresh);
+    if ($js === '') {
         status_header(502);
         header('Content-Type: application/javascript; charset=utf-8');
         echo "/* 360 Consent: a popup JS ideiglenesen nem elérhető */";
         exit;
     }
     header('Content-Type: application/javascript; charset=utf-8');
-    header('Cache-Control: public, max-age=600'); // 10 perc böngésző-cache, hogy a git-frissítés gyorsan elérjen
+    // A verziójel miatt a tartalom immutábilis erre az URL-re; hosszú cache, új kiadáskor új URL.
+    header('Cache-Control: public, max-age=86400');
     echo $js;
     exit;
 }, 0);
@@ -65,12 +87,14 @@ add_action('wp_head', function () {
     if ($host === '') {
         return;
     }
-    $assetUrl = home_url('/?c360_asset=js');
+
+    list(, $ver) = c360_fp_get_js(false);
+    $assetUrl = home_url('/?c360_asset=js' . ($ver ? '&v=' . $ver : ''));
 
     // A per-domain configot a szerver kéri le (1h cache) és inline-ba tesszük – nincs böngészős 360-marketing.hu kérés.
     $cacheKey = 'c360_remote_' . md5($host);
-    $js = get_transient($cacheKey);
-    if ($js === false) {
+    $cfgJs = get_transient($cacheKey);
+    if ($cfgJs === false) {
         $resp = wp_remote_get('https://360-marketing.hu/c360/api/loader.php?host=' . rawurlencode($host), [
             'timeout' => 5,
             'headers' => ['Accept' => 'application/javascript'],
@@ -78,18 +102,18 @@ add_action('wp_head', function () {
         if (!is_wp_error($resp) && (int) wp_remote_retrieve_response_code($resp) === 200) {
             $body = (string) wp_remote_retrieve_body($resp);
             if (strpos($body, 'C360_REMOTE') !== false) {
-                $js = $body;
-                set_transient($cacheKey, $js, HOUR_IN_SECONDS);
+                $cfgJs = $body;
+                set_transient($cacheKey, $cfgJs, HOUR_IN_SECONDS);
             }
         }
     }
 
-    echo "\n<!-- 360 Consent first-party loader (saját domén, git-szinkron) -->\n";
+    echo "\n<!-- 360 Consent first-party loader (saját domén, git-szinkron, hash-verzió) -->\n";
     echo "<!--noptimize-->\n";
-    if (is_string($js) && $js !== '') {
-        // A jsDelivr min.js hivatkozást a SAJÁT doménes végpontra cseréljük – nulla böngészős kereszt-domain kérés.
-        $js = preg_replace('~https://cdn\.jsdelivr\.net/gh/pengemedia-fejlesztes/360-consent@[^/]+/dist/c360-consent\.min\.js~', $assetUrl, $js);
-        echo "<script data-noptimize=\"1\" data-cfasync=\"false\">\n" . $js . "\n</script>\n";
+    if (is_string($cfgJs) && $cfgJs !== '') {
+        // A jsDelivr min.js hivatkozást a SAJÁT doménes, verziózott végpontra cseréljük.
+        $cfgJs = preg_replace('~https://cdn\.jsdelivr\.net/gh/pengemedia-fejlesztes/360-consent@[^/]+/dist/c360-consent\.min\.js~', $assetUrl, $cfgJs);
+        echo "<script data-noptimize=\"1\" data-cfasync=\"false\">\n" . $cfgJs . "\n</script>\n";
     } else {
         // Tartalék: ha a szerver nem érte el a configot, a kliens tölti a saját doménes JS-t.
         $policy = wp_json_encode(C360_POLICY_URL);

@@ -1,6 +1,6 @@
 /*!
  * 360 Marketing – Google Consent Mode v2 süti popup
- * Verzió: 1.4.7
+ * Verzió: 1.4.8
  * Ezt a fájlt a tools/build.mjs generálja a src/ és a data/ mappából – ne kézzel szerkeszd.
  * Forrás: https://github.com/pengemedia-fejlesztes/360-consent
  * https://360-marketing.hu
@@ -289,7 +289,7 @@
 
 
   var CATS = ['necessary', 'preferences', 'statistics', 'marketing'];
-  var VERSION = '1.4.7';
+  var VERSION = '1.4.8';
 
   w.dataLayer = w.dataLayer || [];
   function gtag() { w.dataLayer.push(arguments); }

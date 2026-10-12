@@ -7,7 +7,7 @@
  *              fejlett követésvédelem esetén is megjelenik. A git-frissítések automatikusan átjönnek.
  *              Az asset-URL tartalom-hash alapú verziójelet kap (&v=), így új kiadáskor a böngésző-cache
  *              automatikusan megújul. A GTM megkerülve.
- * Version: 3.1.0
+ * Version: 3.2.0
  * Author: Penge Média / 360 Marketing
  *
  * Telepítés: wp-content/mu-plugins/360-consent-firstparty.php (mu-plugin = mindig aktív).
@@ -41,7 +41,7 @@ function c360_fp_get_js($fresh = false)
     $verKey = 'c360_jsver_' . md5($channel);
     $js = $fresh ? false : get_transient($jsKey);
     if ($js === false) {
-        $resp = wp_remote_get('https://cdn.jsdelivr.net/gh/pengemedia-fejlesztes/360-consent@' . $channel . '/dist/c360-consent.min.js', ['timeout' => 8]);
+        $resp = wp_remote_get('https://cdn.jsdelivr.net/gh/pengemedia-fejlesztes/360-consent@' . $channel . '/dist/c360-consent.js', ['timeout' => 8]);
         if (!is_wp_error($resp) && (int) wp_remote_retrieve_response_code($resp) === 200) {
             $body = (string) wp_remote_retrieve_body($resp);
             if (strlen($body) > 1000) {
@@ -112,7 +112,7 @@ add_action('wp_head', function () {
     echo "<!--noptimize-->\n";
     if (is_string($cfgJs) && $cfgJs !== '') {
         // A jsDelivr min.js hivatkozást a SAJÁT doménes, verziózott végpontra cseréljük.
-        $cfgJs = preg_replace('~https://cdn\.jsdelivr\.net/gh/pengemedia-fejlesztes/360-consent@[^/]+/dist/c360-consent\.min\.js~', $assetUrl, $cfgJs);
+        $cfgJs = preg_replace('~https://cdn\.jsdelivr\.net/gh/pengemedia-fejlesztes/360-consent@[^/]+/dist/c360-consent(\.min)?\.js~', $assetUrl, $cfgJs);
         echo "<script data-noptimize=\"1\" data-cfasync=\"false\">\n" . $cfgJs . "\n</script>\n";
     } else {
         // Tartalék: ha a szerver nem érte el a configot, a kliens tölti a saját doménes JS-t.

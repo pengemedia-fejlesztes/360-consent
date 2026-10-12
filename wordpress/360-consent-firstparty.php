@@ -22,9 +22,12 @@ if (!defined('C360_POLICY_URL')) {
 
 add_action('wp_head', function () {
     $policy = wp_json_encode(C360_POLICY_URL);
+    // noptimize + data-noptimize: az Autoptimize ne vonja össze/törölje az inline scriptet.
+    // data-cfasync="false": a Cloudflare Rocket Loader is hagyja békén.
     ?>
 <!-- 360 Consent first-party loader (GTM nélkül – Safari privát módhoz is) -->
-<script>
+<!--noptimize-->
+<script data-noptimize="1" data-cfasync="false">
 window.C360_CONFIG = window.C360_CONFIG || { policyUrl: <?php echo $policy; ?> };
 (function (d, h) {
   if (d.getElementById('c360-loader')) return; // a GTM-es változat már betöltötte
@@ -41,5 +44,6 @@ window.C360_CONFIG = window.C360_CONFIG || { policyUrl: <?php echo $policy; ?> }
   d.head.appendChild(s);
 })(document, location.hostname);
 </script>
+<!--/noptimize-->
 <?php
 }, 1); // korai prioritás, hogy a banner a lehető leghamarabb megjelenjen

@@ -354,7 +354,9 @@
     if ((pl === 'top' || pl === 'bottom') && size) sized = '#c360.c360--' + pl + ' .c360-dlg{height:' + size + 'vh;max-height:' + size + 'vh!important;display:flex;flex-direction:column;justify-content:center}';
     return '#c360,#c360 *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.5;letter-spacing:normal;text-transform:none}' +
       '#c360[hidden],#c360 [hidden]{display:none!important}' +
-      '#c360{position:fixed;inset:0;z-index:2147483000;display:flex;padding:16px;pointer-events:none}' +
+      'html.c360-lock,html.c360-lock body{overflow:hidden!important;overscroll-behavior:none}' +
+      'html.c360-lock body{position:fixed!important;width:100%!important;left:0;right:0}' +
+      '#c360{position:fixed;top:0;left:0;right:0;bottom:0;height:100vh;height:100dvh;z-index:2147483000;display:flex;padding:16px;pointer-events:none;overscroll-behavior:contain}' +
       '#c360.c360--dim{background:rgba(15,23,32,.5);pointer-events:auto}' +
       '#c360.c360--center,#c360.c360--prefs{align-items:center;justify-content:center}' +
       '#c360.c360--bottom{align-items:flex-end;justify-content:center;padding:0}' +
@@ -459,10 +461,15 @@
       // --- mobil: minden elrendezesnel negyzetes, kozepre igazitott popup (a sized/desktop szabalyok UTAN) ---
       '@media (max-width:640px){' +
       '#c360,#c360.c360--center,#c360.c360--prefs,#c360.c360--top,#c360.c360--bottom,#c360.c360--left,#c360.c360--right{align-items:center!important;justify-content:center!important;padding:12px!important}' +
-      '#c360 .c360-dlg,#c360.c360--center .c360-dlg,#c360.c360--top .c360-dlg,#c360.c360--bottom .c360-dlg,#c360.c360--left .c360-dlg,#c360.c360--right .c360-dlg{width:94vw!important;max-width:94vw!important;min-width:0!important;height:94vw!important;max-height:88vh!important;border-radius:16px!important;padding:20px 16px!important;display:flex!important;flex-direction:column!important;justify-content:center!important;text-align:center;overflow:auto;overflow-x:hidden}' +
-      '#c360.c360--prefs .c360-dlg{width:94vw!important;max-width:94vw!important;height:auto!important;max-height:88vh!important;padding:0!important;text-align:left;justify-content:flex-start!important}' +
+      '#c360 .c360-dlg,#c360.c360--center .c360-dlg,#c360.c360--top .c360-dlg,#c360.c360--bottom .c360-dlg,#c360.c360--left .c360-dlg,#c360.c360--right .c360-dlg{width:94vw!important;max-width:94vw!important;min-width:0!important;height:min(94vw,82dvh)!important;max-height:82dvh!important;border-radius:16px!important;padding:18px 14px!important;display:flex!important;flex-direction:column!important;justify-content:center!important;text-align:center;overflow:hidden!important}' +
+      '#c360.c360--prefs .c360-dlg{width:94vw!important;max-width:94vw!important;height:auto!important;max-height:86dvh!important;padding:0!important;text-align:left;justify-content:flex-start!important;overflow:auto!important}' +
       '#c360 .c360-title{font-size:clamp(13px,4.4vw,19px)!important;white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis}' +
-      '#c360 .c360-dlg--hero{height:94vw!important;padding:20px 16px!important}' +
+      '#c360 .c360-dlg--hero{height:min(94vw,82dvh)!important;padding:18px 14px!important;overflow:hidden!important}' +
+      '#c360 .c360-text{font-size:clamp(11px,3.3vw,14px)!important;line-height:1.45!important}' +
+      '#c360 .c360-policy{font-size:12px!important;margin-top:8px!important}' +
+      '#c360 .c360-btns,#c360 .c360-btns--hero{margin-top:14px!important;gap:8px!important}' +
+      '#c360 .c360-btns .c360-btn,#c360 .c360-btns--hero .c360-btn{min-height:40px!important;font-size:13px!important}' +
+      '#c360 .c360-btns .c360-btn--primary,#c360 .c360-btns--hero .c360-btn--primary{min-height:48px!important;font-size:16px!important}' +
       '}' +
       (CONFIG.customCss ? '\n/* saját CSS */\n' + String(CONFIG.customCss) : '');
   }
@@ -601,6 +608,7 @@
     lastFocus = d.activeElement;
     root.hidden = false;
     fab.hidden = true;
+    lockScroll(true);
     render(prefs ? '[data-act="save"]' : '[data-act="accept"]');
     if (prefs) scanForPrefs();
   }
@@ -616,9 +624,27 @@
     });
   }
 
+  // A banner alatt az oldal nem gorgethet (mobilon ne csusszon el a popup).
+  var scrollY = 0;
+  function lockScroll(on) {
+    try {
+      var html = d.documentElement, body = d.body;
+      if (on) {
+        scrollY = w.pageYOffset || html.scrollTop || 0;
+        html.classList.add('c360-lock');
+        body.style.top = -scrollY + 'px';
+      } else if (html.classList.contains('c360-lock')) {
+        html.classList.remove('c360-lock');
+        body.style.top = '';
+        w.scrollTo(0, scrollY);
+      }
+    } catch (e) { /* nem kritikus */ }
+  }
+
   function close() {
     root.hidden = true;
     fab.hidden = false;
+    lockScroll(false);
     if (lastFocus && lastFocus.focus && lastFocus !== d.body) lastFocus.focus();
   }
 

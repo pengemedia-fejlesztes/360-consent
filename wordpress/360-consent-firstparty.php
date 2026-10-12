@@ -35,13 +35,15 @@ add_action('init', function () {
     }
     $channel = preg_replace('/[^a-zA-Z0-9._-]/', '', (string) C360_CHANNEL) ?: '1';
     $cacheKey = 'c360_js_' . md5($channel);
-    $js = get_transient($cacheKey);
+    // Azonnali frissítés kézből: ?c360_asset=js&fresh=<csatorna> – a gyorsítótárat megkerüli.
+    $fresh = isset($_GET['fresh']) && (string) $_GET['fresh'] === $channel;
+    $js = $fresh ? false : get_transient($cacheKey);
     if ($js === false) {
         $resp = wp_remote_get('https://cdn.jsdelivr.net/gh/pengemedia-fejlesztes/360-consent@' . $channel . '/dist/c360-consent.min.js', ['timeout' => 8]);
         if (!is_wp_error($resp) && (int) wp_remote_retrieve_response_code($resp) === 200) {
             $js = (string) wp_remote_retrieve_body($resp);
             if (strlen($js) > 1000) {
-                set_transient($cacheKey, $js, HOUR_IN_SECONDS);
+                set_transient($cacheKey, $js, 15 * MINUTE_IN_SECONDS);
             }
         }
     }

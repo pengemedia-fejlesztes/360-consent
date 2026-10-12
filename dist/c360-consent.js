@@ -1,6 +1,6 @@
 /*!
  * 360 Marketing – Google Consent Mode v2 süti popup
- * Verzió: 1.4.2
+ * Verzió: 1.4.3
  * Ezt a fájlt a tools/build.mjs generálja a src/ és a data/ mappából – ne kézzel szerkeszd.
  * Forrás: https://github.com/pengemedia-fejlesztes/360-consent
  * https://360-marketing.hu
@@ -289,7 +289,7 @@
 
 
   var CATS = ['necessary', 'preferences', 'statistics', 'marketing'];
-  var VERSION = '1.4.2';
+  var VERSION = '1.4.3';
 
   w.dataLayer = w.dataLayer || [];
   function gtag() { w.dataLayer.push(arguments); }
@@ -642,7 +642,7 @@
       '#c360-fab[hidden]{display:none}' +
       '#c360-fab svg{width:24px;height:24px}' +
       '#c360-fab:focus-visible{outline:2px solid #1f2a33;outline-offset:2px}' +
-      (sized && pl === 'center' ? '@media (max-width:640px){#c360 .c360-dlg{padding:20px 16px}}' :
+      (sized && pl === 'center' ? '@media (max-width:640px){#c360 .c360-dlg{width:94vw!important;max-width:94vw!important;min-width:0!important;height:auto!important;max-height:90vh!important;padding:20px 16px}}' :
       '@media (max-width:640px){#c360{padding:0;align-items:flex-end!important;justify-content:center!important}' +
       '#c360 .c360-dlg{width:100%!important;min-width:0!important;height:auto!important;max-height:88vh!important;border-radius:14px 14px 0 0!important;padding:20px 16px}}') +
       '@media (max-width:640px){' +
@@ -668,7 +668,7 @@
       '#c360 .c360-btns--hero{width:100%;max-width:580px;margin:34px auto 0;justify-content:center}' +
       '#c360 .c360-btns--hero .c360-btn{flex:0 1 auto;border-radius:10px}' +
       '#c360 .c360-btns--hero .c360-btn--primary{flex:1 1 55%;min-height:58px;font-size:18px;box-shadow:0 8px 20px ' + rgba(C, 0.28) + '}' +
-      '@media (max-width:640px){#c360 .c360-dlg--hero{padding:64px 20px 28px}#c360 .c360-icon{width:64px;height:64px;margin-bottom:18px}#c360 .c360-icon svg{width:34px;height:34px}#c360 .c360-btns--hero .c360-btn{flex:1 1 100%}#c360 .c360-btns--hero .c360-btn--primary{order:-1}}' +
+      '@media (max-width:640px){#c360 .c360-dlg--hero{padding:36px 18px 20px}#c360 .c360-icon{width:50px;height:50px;margin-bottom:12px}#c360 .c360-icon svg{width:26px;height:26px}#c360 .c360-hero .c360-title{font-size:20px;line-height:1.25;margin-bottom:10px}#c360 .c360-hero .c360-text{font-size:15px;line-height:1.55}#c360 .c360-btns--hero{gap:8px;margin-top:18px}#c360 .c360-btns--hero .c360-btn{flex:1 1 100%;min-height:42px;font-size:14px;padding:9px 16px}#c360 .c360-btns--hero .c360-btn--primary{order:-1;min-height:54px;font-size:17px;font-weight:700;box-shadow:none}}' +
       (CONFIG.customCss ? '\n/* saját CSS */\n' + String(CONFIG.customCss) : '');
   }
 
@@ -730,7 +730,6 @@
         '<h2 class="c360-title" id="c360-title">' + esc(t('title')) + '</h2>' +
         '<p class="c360-text" id="c360-text">' + esc(t('text')) + '</p>' +
         (CONFIG.policyUrl ? '<p class="c360-policy"><a href="' + esc(CONFIG.policyUrl) + '" target="_blank" rel="noopener">' + esc(t('policy')) + '</a></p>' : '') +
-        (chips ? '<div class="c360-chips">' + chips + '</div>' : '') +
         '<div class="c360-btns c360-btns--hero">' + btn('customize', t('customize')) + (CONFIG.showReject ? btn('reject', t('rejectAll')) : '') + btn('accept', t('acceptAll'), true) + '</div>' +
       '</div></div>';
   }

@@ -456,6 +456,14 @@
       '#c360 .c360-btns--hero .c360-btn{flex:0 1 auto;border-radius:10px}' +
       '#c360 .c360-btns--hero .c360-btn--primary{flex:1 1 55%;min-height:58px;font-size:18px;box-shadow:0 8px 20px ' + rgba(C, 0.28) + '}' +
       '@media (max-width:640px){#c360 .c360-dlg--hero{padding:36px 18px 20px}#c360 .c360-icon{width:50px;height:50px;margin-bottom:12px}#c360 .c360-icon svg{width:26px;height:26px}#c360 .c360-hero .c360-title{font-size:20px;line-height:1.25;margin-bottom:10px}#c360 .c360-hero .c360-text{font-size:15px;line-height:1.55}#c360 .c360-btns--hero{gap:8px;margin-top:18px}#c360 .c360-btns--hero .c360-btn{flex:1 1 100%;min-height:42px;font-size:14px;padding:9px 16px}#c360 .c360-btns--hero .c360-btn--primary{order:-1;min-height:54px;font-size:17px;font-weight:700;box-shadow:none}}' +
+      // --- mobil: minden elrendezesnel negyzetes, kozepre igazitott popup (a sized/desktop szabalyok UTAN) ---
+      '@media (max-width:640px){' +
+      '#c360,#c360.c360--center,#c360.c360--prefs,#c360.c360--top,#c360.c360--bottom,#c360.c360--left,#c360.c360--right{align-items:center!important;justify-content:center!important;padding:12px!important}' +
+      '#c360 .c360-dlg,#c360.c360--center .c360-dlg,#c360.c360--top .c360-dlg,#c360.c360--bottom .c360-dlg,#c360.c360--left .c360-dlg,#c360.c360--right .c360-dlg{width:94vw!important;max-width:94vw!important;min-width:0!important;height:94vw!important;max-height:88vh!important;border-radius:16px!important;padding:20px 16px!important;display:flex!important;flex-direction:column!important;justify-content:center!important;text-align:center;overflow:auto;overflow-x:hidden}' +
+      '#c360.c360--prefs .c360-dlg{width:94vw!important;max-width:94vw!important;height:auto!important;max-height:88vh!important;padding:0!important;text-align:left;justify-content:flex-start!important}' +
+      '#c360 .c360-title{font-size:clamp(13px,4.4vw,19px)!important;white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis}' +
+      '#c360 .c360-dlg--hero{height:94vw!important;padding:20px 16px!important}' +
+      '}' +
       (CONFIG.customCss ? '\n/* saját CSS */\n' + String(CONFIG.customCss) : '');
   }
 

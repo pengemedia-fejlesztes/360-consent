@@ -183,7 +183,7 @@ function c360_clean_scan_settings($x): array
     return [
         'enabled' => !empty($x['enabled']),
         'everyDays' => in_array($every, [1, 3, 7, 14, 30], true) ? $every : 7,
-        'maxPages' => max(5, min(100, (int)($x['maxPages'] ?? 20))),
+        'maxPages' => max(5, min(2000, (int)($x['maxPages'] ?? 1000))),
     ];
 }
 

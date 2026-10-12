@@ -11,7 +11,7 @@ const C360_LISTENERS = ['__lcl' => 'Link-kattintás figyelő', '__sdl' => 'Görg
 function c360_fetch_many(array $urls, int $timeout = 12): array
 {
     $out = [];
-    foreach (array_chunk($urls, 6) as $chunk) {
+    foreach (array_chunk($urls, 25) as $chunk) {
         $mh = curl_multi_init();
         $hs = [];
         foreach ($chunk as $u) {
@@ -145,17 +145,14 @@ function c360_gtm_parse(string $js): array
 
 function c360_scan_site(string $host, int $maxPages): array
 {
-    $maxPages = max(1, min(100, $maxPages));
+    $maxPages = max(1, min(2000, $maxPages));
     $base = 'https://' . $host;
     $home = c360_fetch($base . '/');
     if ($home === null) { $base = 'https://www.' . $host; $home = c360_fetch($base . '/'); }
     $all = c360_sitemap_urls($base);
-    $pages = [$base . '/'];
-    if ($all) {
-        $step = max(1, count($all) / max(1, $maxPages - 1));
-        for ($i = 0.0; $i < count($all) && count($pages) < $maxPages; $i += $step) $pages[] = $all[(int)$i];
-    }
-    $pages = array_values(array_unique($pages));
+    // A sitemap MINDEN oldalát bejárjuk (nem mintavételezünk), a maxPages felső korlátig.
+    $pages = array_merge([$base . '/'], $all);
+    $pages = array_slice(array_values(array_unique($pages)), 0, $maxPages);
     $found = []; $unknown = []; $gtmIds = [];
     $hit = function (array $prov, string $where, string $place) use (&$found) {
         if (($prov['cat'] ?? '') === 'infra') return;
@@ -237,7 +234,8 @@ function c360_run_scan(string $host): ?array
     $lock = C360_DATA . '/scan-' . $host . '.lock';
     $fp = fopen($lock, 'c');
     if (!$fp || !flock($fp, LOCK_EX | LOCK_NB)) return null;
-    @set_time_limit(180);
+    @set_time_limit(600);
+    @ini_set('memory_limit', '512M');
     $site = c360_load_site($host);
     $scan = c360_scan_site($host, c360_clean_scan_settings($site['scanSettings'] ?? [])['maxPages']);
     $site = c360_load_site($host) ?: $site; // közben változhatott

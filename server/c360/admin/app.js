@@ -175,6 +175,8 @@
     var ins = site.install || {}, pages = ins.pages || {};
     var list = Object.keys(pages).sort(function (a, b) { return pages[b] < pages[a] ? -1 : 1; });
     var loader = "<script>\n/* 360 Marketing \u2013 Consent popup bet\u00f6lt\u0151 (GTM Custom HTML, trigger: Initialization \u2013 All Pages)\n * A 360 Consent admin be\u00e1ll\u00edt\u00e1sait \u00e9s a popup aktu\u00e1lis verzi\u00f3j\u00e1t a 360 szervere adja (mindig friss);\n * ha az nem \u00e9rhet\u0151 el, a jsDelivr @1 a tartal\u00e9k. https://github.com/pengemedia-fejlesztes/360-consent */\nwindow.C360_CONFIG = {\n  policyUrl: {{DataPolicyURL}}\n};\n(function (d, h) {\n  if (d.getElementById('c360-loader')) return;\n  var s = d.createElement('script');\n  s.id = 'c360-loader';\n  s.async = true;\n  s.src = 'https://360-marketing.hu/c360/api/loader.php?host=' + encodeURIComponent(h);\n  s.onerror = function () {\n    var f = d.createElement('script');\n    f.async = true;\n    f.src = 'https://cdn.jsdelivr.net/gh/pengemedia-fejlesztes/360-consent@1/dist/c360-consent.min.js';\n    d.head.appendChild(f);\n  };\n  d.head.appendChild(s);\n})(document, location.hostname);\n</script>";
+    var policyForWp = JSON.stringify(val('policyUrl', '/adatkezelesi-tajekoztato/'));
+    var wp = "<?php\n/**\n * Plugin Name: 360 Consent \u2013 first-party bet\u00f6lt\u0151\n * Description: A consent-bannert K\u00d6ZVETLEN\u00dcL az oldal fejl\u00e9c\u00e9be t\u00f6lti (GTM n\u00e9lk\u00fcl), \u00edgy Safari priv\u00e1t m\u00f3dban is megjelenik.\n * Version: 1.0.0\n */\nif (!defined('ABSPATH')) { exit; }\nif (!defined('C360_POLICY_URL')) { define('C360_POLICY_URL', " + policyForWp + "); }\nadd_action('wp_head', function () {\n    $policy = wp_json_encode(C360_POLICY_URL);\n    ?>\n<!-- 360 Consent first-party loader -->\n<!--noptimize-->\n<script data-noptimize=\"1\" data-cfasync=\"false\">\nwindow.C360_CONFIG = window.C360_CONFIG || { policyUrl: <?php echo $policy; ?> };\n(function (d, h) {\n  if (d.getElementById('c360-loader')) return;\n  var s = d.createElement('script'); s.id = 'c360-loader'; s.async = true;\n  s.src = 'https://360-marketing.hu/c360/api/loader.php?host=' + encodeURIComponent(h);\n  s.onerror = function () { var f = d.createElement('script'); f.async = true; f.src = 'https://cdn.jsdelivr.net/gh/pengemedia-fejlesztes/360-consent@1/dist/c360-consent.min.js'; d.head.appendChild(f); };\n  d.head.appendChild(s);\n})(document, location.hostname);\n</script>\n<!--/noptimize-->\n<?php\n}, 1);";
     add(body, [
       h('div', { class: 'stats' },
         stat('Első jelzés', fmtDate(ins.firstSeen)), stat('Utolsó jelzés', ago(ins.lastSeen)),
@@ -194,7 +196,25 @@
           h('li', { text: 'Tedd be az alábbi kódot Custom HTML tagként az Initialization – All Pages triggerre.' }),
           h('li', { text: 'Custom Event trigger: gtm_consent_update; a nem Google-os tagekre consent-feltétel + ez a trigger.' })),
         h('pre', { class: 'code', text: loader }),
-        h('button', { class: 'btn', text: 'Kód másolása', onclick: function () { navigator.clipboard.writeText(loader).then(function () { toast('Kimásolva.'); }); } }))
+        h('button', { class: 'btn', text: 'Kód másolása', onclick: function () { navigator.clipboard.writeText(loader).then(function () { toast('Kimásolva.'); }); } })),
+      h('div', { class: 'card' }, h('h2', { text: 'Telepítés WordPress-sel (first-party – Safari privát módhoz)' }),
+        h('p', { class: 'muted', text: 'A Safari privát mód a Google Tag Managert követőként blokkolja, így a GTM-en át érkező consent ott nem jelenik meg. Ez az mu-plugin a betöltőt közvetlenül az oldal fejlécébe teszi (GTM nélkül), így Safariban is feljön. A GTM-es tag maradhat – a betöltő guard-olt, nem fut kétszer.' }),
+        h('ol', null,
+          h('li', { text: 'Töltsd le a lenti PHP-fájlt 360-consent-firstparty.php néven.' }),
+          h('li', { text: 'Töltsd fel az oldal wp-content/mu-plugins/ mappájába (ha nincs, hozd létre). Az mu-plugin automatikusan aktív.' }),
+          h('li', { text: 'Ha az adatkezelési tájékoztató útja más, a wp-config.php-ban: define(\'C360_POLICY_URL\', \'/sajat-utvonal/\');' })),
+        h('pre', { class: 'code', text: wp }),
+        h('div', { class: 'row' },
+          h('button', { class: 'btn', text: 'Kód másolása', onclick: function () { navigator.clipboard.writeText(wp).then(function () { toast('Kimásolva.'); }); } }),
+          h('button', { class: 'btn', text: 'Letöltés (.php)', onclick: function () { var b = new Blob([wp], { type: 'application/x-php' }); var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = '360-consent-firstparty.php'; a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000); } }))),
+      h('div', { class: 'card' }, h('h2', { text: 'Telepítési ellenőrzőlista' }),
+        h('ol', { class: 'checklist' },
+          h('li', { text: '1. A 360-consent-firstparty.php ott van a wp-content/mu-plugins/ mappában (FTP vagy fájlkezelő).' }),
+          h('li', { text: '2. Oldal forrásában (Ctrl/Cmd+U) szerepel a „c360-loader” és a „c360/api/loader.php” – ha nincs, cache-ürítés (LiteSpeed/WP Rocket/Autoptimize) és újratöltés.' }),
+          h('li', { text: '3. Oldaloptimalizáló (Autoptimize/Rocket Loader) nem szedte ki az inline scriptet – a kódban benne a <!--noptimize--> és data-cfasync, ez megvédi.' }),
+          h('li', { text: '4. Tiszta böngészőben (nincs c360_consent süti) a banner feljön – Chrome, Firefox és Safari privát módban is.' }),
+          h('li', { text: '5. Elfogadás/elutasítás után a döntés él; ha a „Munkamenetenként egyszer” be van kapcsolva, új böngésző-munkamenetben újra feljön.' }),
+          h('li', { text: '6. A Szkennelés fülön lefuttatva a felismert szolgáltatások megjelennek, és nincs „közvetlenül az oldal kódjában” figyelmeztetés kezeletlen marketing-szkriptre.' })))
     ]);
     if (site.scan) add(body, h('div', { class: 'card' }, h('h2', { text: 'Utolsó teljes szkennelés' }),
       h('p', { class: 'muted', text: fmtDate(site.scan.scannedAt) + ' · ' + site.scan.pages + ' oldal · GTM: ' + (site.scan.gtm || []).join(', ') }),

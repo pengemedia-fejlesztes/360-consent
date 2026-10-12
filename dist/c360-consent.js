@@ -1,6 +1,6 @@
 /*!
  * 360 Marketing – Google Consent Mode v2 süti popup
- * Verzió: 1.4.4
+ * Verzió: 1.4.5
  * Ezt a fájlt a tools/build.mjs generálja a src/ és a data/ mappából – ne kézzel szerkeszd.
  * Forrás: https://github.com/pengemedia-fejlesztes/360-consent
  * https://360-marketing.hu
@@ -289,7 +289,7 @@
 
 
   var CATS = ['necessary', 'preferences', 'statistics', 'marketing'];
-  var VERSION = '1.4.4';
+  var VERSION = '1.4.5';
 
   w.dataLayer = w.dataLayer || [];
   function gtag() { w.dataLayer.push(arguments); }
@@ -647,7 +647,9 @@
       '#c360 .c360-dlg{width:100%!important;min-width:0!important;height:auto!important;max-height:88vh!important;border-radius:14px 14px 0 0!important;padding:20px 16px}}') +
       '@media (max-width:640px){' +
       '#c360.c360--prefs .c360-dlg{padding:0}' +
-      '#c360 .c360-title{font-size:19px}#c360 .c360-text{font-size:15px}' +
+      '#c360 .c360-dlg{overflow-x:hidden}#c360 .c360-body,#c360 .c360-head,#c360 .c360-text{max-width:100%;box-sizing:border-box;min-width:0}' +
+      '#c360 .c360-head{flex-direction:column;align-items:stretch;gap:8px}#c360 .c360-head .c360-tools{order:-1;display:flex;align-items:center;justify-content:space-between;width:100%;gap:8px}' +
+      '#c360 .c360-title{font-size:16px;margin:0}#c360 .c360-text{font-size:14px;overflow-wrap:break-word;word-break:break-word}#c360 .c360-lang{max-width:55%}' +
       '#c360 .c360-btns .c360-btn,#c360 .c360-btns--lg .c360-btn{flex:1 1 100%;min-height:42px;font-size:14px}' +
       '#c360 .c360-btns .c360-btn--primary,#c360 .c360-btns--lg .c360-btn--primary{order:-1;min-height:52px;font-size:16px;font-weight:700}' +
       '#c360 .c360-row{grid-template-columns:90px 1fr}#c360 .c360-desc,#c360 .c360-list{margin-left:0}}' +

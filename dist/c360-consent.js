@@ -1,6 +1,6 @@
 /*!
  * 360 Marketing – Google Consent Mode v2 süti popup
- * Verzió: 1.4.3
+ * Verzió: 1.4.4
  * Ezt a fájlt a tools/build.mjs generálja a src/ és a data/ mappából – ne kézzel szerkeszd.
  * Forrás: https://github.com/pengemedia-fejlesztes/360-consent
  * https://360-marketing.hu
@@ -289,7 +289,7 @@
 
 
   var CATS = ['necessary', 'preferences', 'statistics', 'marketing'];
-  var VERSION = '1.4.3';
+  var VERSION = '1.4.4';
 
   w.dataLayer = w.dataLayer || [];
   function gtag() { w.dataLayer.push(arguments); }
@@ -564,7 +564,7 @@
     return 'rgba(' + (n >> 16) + ',' + (n >> 8 & 255) + ',' + (n & 255) + ',' + a + ')';
   }
   // Nagy, középre igazított elrendezés: középen, a képernyő legalább felén.
-  function isHero() { return CONFIG.placement === 'center' && +CONFIG.size >= 50; }
+  function isHero() { return CONFIG.placement === 'center' && +CONFIG.size >= 50 && (typeof window === 'undefined' || !window.matchMedia || window.matchMedia('(min-width:641px)').matches); }
 
   function buildCss() {
     C = CONFIG.brandColor;
@@ -648,7 +648,8 @@
       '@media (max-width:640px){' +
       '#c360.c360--prefs .c360-dlg{padding:0}' +
       '#c360 .c360-title{font-size:19px}#c360 .c360-text{font-size:15px}' +
-      '#c360 .c360-btns .c360-btn,#c360 .c360-btns--lg .c360-btn{flex:1 1 100%}' +
+      '#c360 .c360-btns .c360-btn,#c360 .c360-btns--lg .c360-btn{flex:1 1 100%;min-height:42px;font-size:14px}' +
+      '#c360 .c360-btns .c360-btn--primary,#c360 .c360-btns--lg .c360-btn--primary{order:-1;min-height:52px;font-size:16px;font-weight:700}' +
       '#c360 .c360-row{grid-template-columns:90px 1fr}#c360 .c360-desc,#c360 .c360-list{margin-left:0}}' +
       sized +
       // --- nagy elrendezés ---

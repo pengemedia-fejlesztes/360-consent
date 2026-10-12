@@ -54,7 +54,7 @@ add_action('init', function () {
         exit;
     }
     header('Content-Type: application/javascript; charset=utf-8');
-    header('Cache-Control: public, max-age=3600');
+    header('Cache-Control: public, max-age=600'); // 10 perc böngésző-cache, hogy a git-frissítés gyorsan elérjen
     echo $js;
     exit;
 }, 0);

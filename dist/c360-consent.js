@@ -1,6 +1,6 @@
 /*!
  * 360 Marketing – Google Consent Mode v2 süti popup
- * Verzió: 1.4.1
+ * Verzió: 1.4.2
  * Ezt a fájlt a tools/build.mjs generálja a src/ és a data/ mappából – ne kézzel szerkeszd.
  * Forrás: https://github.com/pengemedia-fejlesztes/360-consent
  * https://360-marketing.hu
@@ -23,6 +23,7 @@
     policyUrl: '',                  // adatkezelési tájékoztató URL; üresen a link nem jelenik meg
     cookieName: 'c360_consent',     // a GTM Init template is ezt olvassa – csak együtt módosítsd
     cookieDays: 365,
+    sessionConsent: false,          // true: a döntés csak a böngésző-munkamenetig él (minden új munkamenetben egyszer feljön)
     cookieDomain: '',               // pl. '.domain.hu', ha aldomainek között is közös legyen
     defaultLang: 'en',
     forceLang: '',                  // pl. 'hu' – üresen a <html lang> / böngésző nyelve dönt
@@ -288,7 +289,7 @@
 
 
   var CATS = ['necessary', 'preferences', 'statistics', 'marketing'];
-  var VERSION = '1.4.1';
+  var VERSION = '1.4.2';
 
   w.dataLayer = w.dataLayer || [];
   function gtag() { w.dataLayer.push(arguments); }
@@ -493,7 +494,7 @@
   function writeState(s) {
     // Hozzájárulás esetén 1 évig marad; teljes elutasításnál csak a böngésző bezárásáig, utána újra megkérdezzük.
     var any = s.preferences || s.statistics || s.marketing;
-    setCookie(CONFIG.cookieName, ['v1', s.preferences ? 1 : 0, s.statistics ? 1 : 0, s.marketing ? 1 : 0].join('.'), any ? CONFIG.cookieDays : 0);
+    setCookie(CONFIG.cookieName, ['v1', s.preferences ? 1 : 0, s.statistics ? 1 : 0, s.marketing ? 1 : 0].join('.'), (any && !CONFIG.sessionConsent) ? CONFIG.cookieDays : 0);
   }
 
   // --- Consent Mode v2 update + GTM esemény ---

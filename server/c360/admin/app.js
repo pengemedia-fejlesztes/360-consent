@@ -382,6 +382,7 @@
     var svcs = allServices();
     add(body, h('div', { class: 'card' }, h('h2', { text: 'Megjelenítés' }),
       check('hideEmpty', true, 'Csak az a kategória jelenjen meg, amelyikben van felismert szolgáltatás'),
+      check('sessionConsent', false, 'Munkamenetenként egyszer jelenjen meg (a döntés csak a böngésző bezárásáig él, minden új böngésző-munkamenetben újra feljön)'),
       check('preChecked', false, 'Minden kapcsoló alapból bekapcsolva (a látogató első megnyitásakor)'),
       val('preChecked', false) ? h('p', { class: 'alert', text: 'Figyelem: az EU Bíróság (C-673/17, Planet49) szerint az előre bejelölt hozzájárulás érvénytelen. Ha a látogató a bekapcsolt állapotot menti, a hozzájárulás jogilag vitatható.' }) : null));
     add(body, [h('div', { class: 'row between' }, h('p', { class: 'muted', text: 'Minden kategória egy Consent Mode jóváhagyásnak felel meg. A leírás a bannerben a kategória alatt jelenik meg.' }), langPicker(siteView))]);

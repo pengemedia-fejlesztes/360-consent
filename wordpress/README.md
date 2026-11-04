@@ -22,6 +22,12 @@ a `wp-config.php`-ban felülírható:
 define('C360_POLICY_URL', '/adatkezelesi-tajekoztato/');
 ```
 
-## Érintett oldalak (2026-10-12)
+## Működés (4.0.0)
+A popup JS-t és a domain-configot egy WP-Cron feladat 15 percenként lehúzza (jsDelivr + 360-marketing.hu) és
+statikus fájlba írja: `wp-content/uploads/c360/`. Oldalbetöltéskor csak a fájl olvasása történik, adatbázis-írás
+nincs. Kiadás után a jsDelivr ág-cache-ét üríteni kell, különben az új verzió órákig késhet:
+`https://purge.jsdelivr.net/gh/pengemedia-fejlesztes/360-consent@1/dist/c360-consent.js`
+
+## Érintett oldalak (4.0.0 telepítve: 2026-11-04)
 - fuvarozas-szallitmanyozas.com (pengemed cPanel)
 - mrbighungary.hu (mrbighun cPanel)

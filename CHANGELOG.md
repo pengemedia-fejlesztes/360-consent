@@ -1,5 +1,11 @@
 # Változásnapló
 
+## WordPress first-party betöltő 4.0.0 – 2026-11-04
+- A popup JS-t és a domain-configot nem transientben, hanem **statikus fájlban** tárolja (`wp-content/uploads/c360/`), és egy WP-Cron feladat 15 percenként frissíti (egyszerre csak egy folyamat, `flock`, atomi írással). Oldalbetöltéskor nincs adatbázis-írás és nincs külső kérés.
+- Megszűnt a transient-lejáratkori `Deadlock found when trying to get lock` SQL-hiba (mrbighungary.hu 2026-11-04, fuvarozas-szallitmanyozas.com 2026-11-03).
+- A böngésző a statikus fájlt kapja `?v=<tartalom-hash>` verziójellel; a `/?c360_asset=js` végpont tartalékként megmaradt.
+- Egy git-kiadás minden oldalon automatikusan, legfeljebb ~15 percen belül megjelenik; a jsDelivr `@1` ág-cache-ét kiadás után üríteni kell (`https://purge.jsdelivr.net/gh/pengemedia-fejlesztes/360-consent@1/dist/c360-consent.js`).
+
 ## 1.4.1 – 2026-09-30
 - Új betöltő: `https://360-marketing.hu/c360/api/loader.php?host=…` – egy kérésben adja a domain beállításait és a popup pontos verzióját. A jsDelivr `@1` alias a böngészőkben 7 napig cache-elődött, ezért egy új kiadás napokig nem látszott; a pontos verziós cím örökre cache-elhető, a betöltő pedig mindig friss.
 - Nagy elrendezés (középen, a képernyő legalább 50%-án): középre igazított tartalom nagy ikonnal, olvasható sorhosszal, kategória-címkékkel, a nyelvválasztó és a jelölés a jobb felső sarokban; mobilon a fő gomb felül.
